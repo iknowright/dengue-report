@@ -191,36 +191,27 @@ function addDangerMarkers(layer){
   dangerDots.forEach(function(item,id){
     var lat = dangerDots[id].geometry.coordinates[1];
     var lng = dangerDots[id].geometry.coordinates[0];
-    var address = dangerDots[id].properties.address;
-    var address_describe = dangerDots[id].properties.address_describe;
     var type = dangerDots[id].properties.type;
-    type = type ? type : '<em style="opacity:0.5">無資料</em>';
 
-    var icon = L.icon({
-      iconUrl: 'images/danger.svg',
-      iconSize: [30,30], // size of the icon
-      popupAnchor: [0,-30],
-      iconAnchor:   [15, 30]
-    });
+    if(type !== ''){
+      var icon = L.icon({
+        iconUrl: 'images/danger.svg',
+        iconSize: [30,30], // size of the icon
+        popupAnchor: [0,-30],
+        iconAnchor:   [15, 30]
+      });
 
-    var marker = L.marker([lat, lng], {icon: icon}).bindPopup(
-                    ('<table>' +
-                      '<tr>' +
-                        '<th>類型</th>' +
-                        '<td>{0}</td>' +
-                      '</tr>' +
-                      '<tr>' +
-                        '<th>地址</th>' +
-                        '<td>{1}</td>' +
-                      '</tr>' +
-                      '<tr>' +
-                        '<th>描述</th>' +
-                        '<td>{2}</td>' +
-                      '</tr>' +
-                    '</table>').format(type, address, address_describe));
+      var marker = L.marker([lat, lng], {icon: icon}).bindPopup(
+                      ('<table>' +
+                        '<tr>' +
+                          '<th>類型</th>' +
+                          '<td>{0}</td>' +
+                        '</tr>' +
+                      '</table>').format(type));
 
-    layer.addLayer(marker)
-    dangerArray.push(marker);
+      layer.addLayer(marker)
+      dangerArray.push(marker);
+    }
   });
   map.addLayer(layer);
 }
