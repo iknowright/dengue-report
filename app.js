@@ -192,26 +192,31 @@ function addDangerMarkers(layer){
     var lat = dangerDots[id].geometry.coordinates[1];
     var lng = dangerDots[id].geometry.coordinates[0];
     var type = dangerDots[id].properties.type;
+    var district = dangerDots[id].properties.district;
+    var villige = dangerDots[id].properties.villige;
+    type = type ? type : '<em style="opacity:0.5">無資料</em>';
 
-    if(type !== ''){
-      var icon = L.icon({
-        iconUrl: 'images/danger.svg',
-        iconSize: [30,30], // size of the icon
-        popupAnchor: [0,-30],
-        iconAnchor:   [15, 30]
-      });
+    var icon = L.icon({
+      iconUrl: 'images/danger.svg',
+      iconSize: [30,30], // size of the icon
+      popupAnchor: [0,-30],
+      iconAnchor:   [15, 30]
+    });
 
-      var marker = L.marker([lat, lng], {icon: icon}).bindPopup(
-                      ('<table>' +
-                        '<tr>' +
-                          '<th>類型</th>' +
-                          '<td>{0}</td>' +
-                        '</tr>' +
-                      '</table>').format(type));
+    var marker = L.marker([lat, lng], {icon: icon}).bindPopup(
+                    ('<table>' +
+                      '<tr>' +
+                        '<th>地區</th>' +
+                        '<td>台南 {0} {1}</td>' +
+                      '</tr>' +
+                      '<tr>' +
+                        '<th>類型</th>' +
+                        '<td>{2}</td>' +
+                      '</tr>' +
+                    '</table>').format(district, villige, type));
 
-      layer.addLayer(marker)
-      dangerArray.push(marker);
-    }
+    layer.addLayer(marker)
+    dangerArray.push(marker);
   });
   map.addLayer(layer);
 }
