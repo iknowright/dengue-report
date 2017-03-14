@@ -9,17 +9,20 @@ if (!String.prototype.format) {
       ;
     });
   };
-}
+} 
 
 var bucketJson = {};
 var countryJson = {};
+var dangerDots = [];
 var allWeekResult = {};
 var map;
 var heat;
 var markerArray = [];
+var dangerArray = [];
+var dangerClusterLayer;
 var countryView = {
-  台南: [22.9971, 120.2126],
-  高雄: [22.6397615, 120.2999183]
+  '台南': [22.9971, 120.2126],
+  '高雄': [22.6397615, 120.2999183]
 }
 
 $(document).ready(function() {
@@ -38,62 +41,93 @@ $(document).ready(function() {
     "https://s3-ap-northeast-1.amazonaws.com/dengue-report-dest/bucket-list.json",
     function(data) {
       bucketJson = data;
-      console.log(bucketJson);
   });
 
-  map = L.map('map').setView(countryView[$("#select-country").val()], 14)
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'ching56.17hng6ja',
-    accessToken: 'pk.eyJ1IjoiY2hpbmc1NiIsImEiOiJjaXNiZmYydGMwMTN1MnpwbnNqNWVqM2plIn0.k7h-PUGX7Tl5xLwDH3Qpsg'
-  }).addTo(map);
+  $.getJSON("dangerJson.json", function(data) {
+    dangerDots = data['features'];
 
-  heat = L.heatLayer([],{
-    minOpacity:0.4,
-    radius: 40,
-    blur:20,    //越小越精確、越大heat lose 越多
-    gradient: {
-      0.4: 'SlateBlue',
-      0.6: 'Gold',
-      1: 'red',
-    }
-  });
-  $("#map").hide();
+    dangerClusterLayer = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      maxClusterRadius: 50
+    });
+    map = L.map('map').setView(countryView[$("#select-country").val()], 14)
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      maxZoom: 18,
+      id: 'ching56.17hng6ja',
+      accessToken: 'pk.eyJ1IjoiY2hpbmc1NiIsImEiOiJjaXNiZmYydGMwMTN1MnpwbnNqNWVqM2plIn0.k7h-PUGX7Tl5xLwDH3Qpsg'
+    }).addTo(map);
+    
+    map.addLayer(dangerClusterLayer);
+    addDangerMarkers(dangerClusterLayer);
 
-  var legend = L.control({position: 'bottomright'});
-  var legend2 = L.control({position: 'bottomright'});
-  legend.onAdd = function (mymap) {
-    var div = L.DomUtil.create('div', 'info legend legend-heat'),
-        grades = [0,50,100],
-        labels = [];
-    div.innerHTML+='<span class = "legend-header"><img src="images/heat.svg" width="18px" height="18px">&emsp;過去平均卵數（個）</img><hr>'
-    div.innerHTML += '<i style="background:linear-gradient(to bottom, rgba(106,90,205,0.7) 0%,rgba(255,215,0,0.4) 50%,rgba(255,0,0,1) 100%);"></i>';
-    div.innerHTML += '<div class="text-center">0<br>&#8768;<br>80 +</div>'  //過去平均卵數legend 標示
-
-    return div;
-  };
-
-  legend2.onAdd = function (mymap) {
-    var div = L.DomUtil.create('div', 'info legend'),
-        grades = [0, 1, 50, 100, 150, 200],
-        labels = [];
-
-    div.innerHTML += '<span class = "legend-header"><img src="images/location.svg" width="18px" height="18px">&emsp;&emsp;&emsp;卵數（個）&emsp;&emsp;</img><hr>';
-    for (var i = 0; i < grades.length; i++) {
-      if(grades[i] == 0) {
-        div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">'+ grades[i]+ '<br></div>';
-      } else {
-        div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">'+ grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1]-1) + '<br></div>' : ' +<br></div>');
+    heat = L.heatLayer([],{
+      minOpacity:0.4,
+      radius: 40,
+      blur:20,    //越小越精確、越大heat lose 越多
+      gradient: {
+        0.4: 'SlateBlue',
+        0.6: 'Gold',
+        1: 'red',
       }
-    }
+    });
+    $("#map").hide();
 
-    div.innerHTML += '<i style="background:#cccccc"></i>' + '<div class="text-center">' + '其他' + '<br></div>';
+    var avgEggLegend = L.control({position: 'bottomright'});
+    var weekEggLegend = L.control({position: 'bottomright'});
+    var dangerDotLegend = L.control({position: 'bottomright'});
+    avgEggLegend.onAdd = function (mymap) {
+      var div = L.DomUtil.create('div', 'info legend legend-heat'),
+          grades = [0,50,100],
+          labels = [];
+      div.innerHTML+='<span class = "legend-header"><img src="images/heat.svg" width="18px" height="18px">&emsp;過去平均卵數（個）</img><hr>'
+      div.innerHTML += '<i style="background:linear-gradient(to bottom, rgba(106,90,205,0.7) 0%,rgba(255,215,0,0.4) 50%,rgba(255,0,0,1) 100%);"></i>';
+      div.innerHTML += '<div class="text-center">0<br>&#8768;<br>80 +</div>'  //過去平均卵數legend 標示
 
-    return div;
-  };
-  legend.addTo(map);
-  legend2.addTo(map);
+      return div;
+    };
+
+    weekEggLgend.onAdd = function (mymap) {
+      var div = L.DomUtil.create('div', 'info legend'),
+          grades = [0, 1, 50, 100, 150, 200],
+          labels = [];
+
+      div.innerHTML += '<span class = "legend-header"><img src="images/location.svg" width="18px" height="18px">&emsp;&emsp;&emsp;卵數（個）&emsp;&emsp;</img><hr>';
+      for (var i = 0; i < grades.length; i++) {
+        if(grades[i] == 0) {
+          div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">'+ grades[i]+ '<br></div>';
+        } else {
+          div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">'+ grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1]-1) + '<br></div>' : ' +<br></div>');
+        }
+      }
+
+      div.innerHTML += '<i style="background:#cccccc"></i>' + '<div class="text-center">' + '其他' + '<br></div>';
+
+      return div;
+    };
+
+    dangerDotLegend.onAdd = function (mymap) {
+    var div = L.DomUtil.create('div', 'info legend');
+    $(div).css({
+      width: '174px',
+      textAlign: 'center',
+    });
+
+      div.innerHTML = '<label id="danger-marker-checkbox"><input type="checkbox" checked="checked"><img src="images/danger.svg">顯示列管點</label>'
+      return div;
+    };
+    avgEggLegend.addTo(map);
+    weekEggLegend.addTo(map);
+    dangerDotLegend.addTo(map);
+
+    $("#danger-marker-checkbox > input").bind("click", function() {
+        if($(this).prop("checked")) {
+          addDangerMarkers(dangerClusterLayer);
+        } else {
+          removeDangerMarkers(dangerClusterLayer);
+        }
+    })
+  });
 });
 
 // date
@@ -156,6 +190,50 @@ $("#select-village").change(function() {
     insertBucketList($("#weeklyDatePicker").val());
   });
 });
+
+function addDangerMarkers(layer){
+  dangerDots.forEach(function(item,id){
+    var lat = dangerDots[id]['geometry']['coordinates'][1];
+    var lng = dangerDots[id]['geometry']['coordinates'][0];
+    var address = dangerDots[id]['properties'].address;
+    var address_describe = dangerDots[id]['properties'].address_describe;
+    var type = dangerDots[id]['properties'].type;
+    type = type ? type : '<em style="opacity:0.5">無資料</em>';
+
+    var icon = L.icon({
+      iconUrl: 'images/danger.svg',
+      iconSize: [30,30], // size of the icon
+      popupAnchor: [0,-30],
+      iconAnchor:   [15, 30]
+    });
+
+    var marker = L.marker([lat, lng], {icon: icon}).bindPopup('\
+                    <table>\
+                      <tr>\
+                        <th>類型</th>\
+                        <td>{0}</td>\
+                      </tr>\
+                      <tr>\
+                        <th>地址</th>\
+                        <td>{1}</td>\
+                      </tr>\
+                      <tr>\
+                        <th>描述</th>\
+                        <td>{2}</td>\
+                      </tr>\
+                    </table>'.format(type, address, address_describe));
+
+    layer.addLayer(marker)
+    dangerArray.push(marker);
+  });
+  map.addLayer(layer);
+}
+
+function removeDangerMarkers(layer){
+  dangerArray.forEach(function(marker) {
+    layer.removeLayer(marker);
+  });
+}
 
 // fetch '201x/xx/xx ~ 201x/xx/xx.json'
 function fetchWeek(week, cb) {
@@ -324,6 +402,7 @@ function updateMap(insertBucketJson) {
                   .addTo(map);
     markerArray.push(marker);
   });
+
   $("#map").show();
   heat.addTo(map);
 };

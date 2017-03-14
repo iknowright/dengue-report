@@ -32,6 +32,16 @@ td{
   border-radius: 5px;
 }
 
+label#danger-marker-checkbox {
+  margin: 0;
+  padding: 5px;
+  cursor: pointer;
+}
+
+label#danger-marker-checkbox img {
+  padding: 6px 5px;
+}
+
 .legend {
   line-height: 18px;
   color: #555;
