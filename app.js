@@ -1,13 +1,12 @@
 // string format
 if (!String.prototype.format) {
-  String.prototype.format = function() {
+  String.prototype.format = function () {
     var args = arguments;
-    return this.replace(/{(\d+)}/g, function(match, number) {
-      return typeof args[number] != 'undefined'
+    return this.replace(/{(\d+)}/g, function (match, number) {
+      return typeof args[number] !== 'undefined'
         ? args[number]
-        : match
-      ;
-    });
+        : match;
+    })
   };
 } 
 
@@ -44,7 +43,7 @@ $(document).ready(function() {
   });
 
   $.getJSON("dangerJson.json", function(data) {
-    dangerDots = data['features'];
+    dangerDots = data.features;
 
     dangerClusterLayer = L.markerClusterGroup({
       showCoverageOnHover: false,
@@ -76,10 +75,8 @@ $(document).ready(function() {
     var avgEggLegend = L.control({position: 'bottomright'});
     var weekEggLegend = L.control({position: 'bottomright'});
     var dangerDotLegend = L.control({position: 'bottomright'});
-    avgEggLegend.onAdd = function (mymap) {
-      var div = L.DomUtil.create('div', 'info legend legend-heat'),
-          grades = [0,50,100],
-          labels = [];
+    avgEggLegend.onAdd = function () {
+      var div = L.DomUtil.create('div', 'info legend legend-heat');
       div.innerHTML+='<span class = "legend-header"><img src="images/heat.svg" width="18px" height="18px">&emsp;過去平均卵數（個）</img><hr>'
       div.innerHTML += '<i style="background:linear-gradient(to bottom, rgba(106,90,205,0.7) 0%,rgba(255,215,0,0.4) 50%,rgba(255,0,0,1) 100%);"></i>';
       div.innerHTML += '<div class="text-center">0<br>&#8768;<br>80 +</div>'  //過去平均卵數legend 標示
@@ -87,14 +84,13 @@ $(document).ready(function() {
       return div;
     };
 
-    weekEggLgend.onAdd = function (mymap) {
+    weekEggLegend.onAdd = function () {
       var div = L.DomUtil.create('div', 'info legend'),
-          grades = [0, 1, 50, 100, 150, 200],
-          labels = [];
+          grades = [0, 1, 50, 100, 150, 200];
 
       div.innerHTML += '<span class = "legend-header"><img src="images/location.svg" width="18px" height="18px">&emsp;&emsp;&emsp;卵數（個）&emsp;&emsp;</img><hr>';
       for (var i = 0; i < grades.length; i++) {
-        if(grades[i] == 0) {
+        if(grades[i] === 0) {
           div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">'+ grades[i]+ '<br></div>';
         } else {
           div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">'+ grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1]-1) + '<br></div>' : ' +<br></div>');
@@ -106,7 +102,7 @@ $(document).ready(function() {
       return div;
     };
 
-    dangerDotLegend.onAdd = function (mymap) {
+    dangerDotLegend.onAdd = function () {
     var div = L.DomUtil.create('div', 'info legend');
     $(div).css({
       width: '174px',
@@ -135,10 +131,10 @@ $("#weeklyDatePicker").datetimepicker({
   format: 'YYYY-MM-DD'
 });
 
-$("#weeklyDatePicker").on("dp.change", function(e) {
+$("#weeklyDatePicker").on("dp.change", function() {
   var value = $("#weeklyDatePicker").val();
-  firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  lastDate =  moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
+  var lastDate =  moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
   $("#weeklyDatePicker").val(firstDate + "~" + lastDate);
   fetchWeek($("#weeklyDatePicker").val(), function() {
     insertBucketList($("#weeklyDatePicker").val());
@@ -193,11 +189,11 @@ $("#select-village").change(function() {
 
 function addDangerMarkers(layer){
   dangerDots.forEach(function(item,id){
-    var lat = dangerDots[id]['geometry']['coordinates'][1];
-    var lng = dangerDots[id]['geometry']['coordinates'][0];
-    var address = dangerDots[id]['properties'].address;
-    var address_describe = dangerDots[id]['properties'].address_describe;
-    var type = dangerDots[id]['properties'].type;
+    var lat = dangerDots[id].geometry.coordinates[1];
+    var lng = dangerDots[id].geometry.coordinates[0];
+    var address = dangerDots[id].properties.address;
+    var address_describe = dangerDots[id].properties.address_describe;
+    var type = dangerDots[id].properties.type;
     type = type ? type : '<em style="opacity:0.5">無資料</em>';
 
     var icon = L.icon({
@@ -207,21 +203,21 @@ function addDangerMarkers(layer){
       iconAnchor:   [15, 30]
     });
 
-    var marker = L.marker([lat, lng], {icon: icon}).bindPopup('\
-                    <table>\
-                      <tr>\
-                        <th>類型</th>\
-                        <td>{0}</td>\
-                      </tr>\
-                      <tr>\
-                        <th>地址</th>\
-                        <td>{1}</td>\
-                      </tr>\
-                      <tr>\
-                        <th>描述</th>\
-                        <td>{2}</td>\
-                      </tr>\
-                    </table>'.format(type, address, address_describe));
+    var marker = L.marker([lat, lng], {icon: icon}).bindPopup(
+                    ('<table>' +
+                      '<tr>' +
+                        '<th>類型</th>' +
+                        '<td>{0}</td>' +
+                      '</tr>' +
+                      '<tr>' +
+                        '<th>地址</th>' +
+                        '<td>{1}</td>' +
+                      '</tr>' +
+                      '<tr>' +
+                        '<th>描述</th>' +
+                        '<td>{2}</td>' +
+                      '</tr>' +
+                    '</table>').format(type, address, address_describe));
 
     layer.addLayer(marker)
     dangerArray.push(marker);
@@ -237,7 +233,7 @@ function removeDangerMarkers(layer){
 
 // fetch '201x/xx/xx ~ 201x/xx/xx.json'
 function fetchWeek(week, cb) {
-  if(allWeekResult[week] != undefined) {
+  if(allWeekResult[week] !== undefined) {
     cb();
     return;
   }
@@ -252,7 +248,7 @@ function fetchWeek(week, cb) {
     allWeekResult[week] = {};
     cb();
   });
-};
+}
 
 function insertBucketList(week) {
   $("#bucket-list").empty();
@@ -273,8 +269,8 @@ function insertBucketList(week) {
       var bucketAddress = "{0}{1}{2}".format(country, town, village);
       var bucketResult = allWeekResult[week][country][town][village][bucketId];
       insertBucketJson[bucketId] = {
-        egg_num: allWeekResult[week][country][town][village][bucketId]['egg_num'],
-        avg_egg_num: allWeekResult[week][country][town][village][bucketId]['avg_egg_num']
+        egg_num: allWeekResult[week][country][town][village][bucketId].egg_num,
+        avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num
       };
       insertBucketHtml(bucketAddress, bucketResult);
     })
@@ -291,8 +287,8 @@ function insertBucketList(week) {
         var bucketAddress = "{0}{1}{2}".format(country, town, village);
         var bucketResult = allWeekResult[week][country][town][village][bucketId];
         insertBucketJson[bucketId] = {
-          egg_num: allWeekResult[week][country][town][village][bucketId]['egg_num'],
-          avg_egg_num: allWeekResult[week][country][town][village][bucketId]['avg_egg_num']
+          egg_num: allWeekResult[week][country][town][village][bucketId].egg_num,
+          avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num
         };
         insertBucketHtml(bucketAddress, bucketResult);
       });
@@ -303,36 +299,36 @@ function insertBucketList(week) {
 }
 
 function insertBucketHtml(bucketAddress, bucketResult) {
-  var insertHTML = "\
-    <div class='col-md-3 col-xs-12'>\
-      <div class='panel panel-default'>\
-        <div class='panel-heading text-center'>\
-          <h3 class='panel-title'>{0}</h3>\
-          <span>{1}</span>\
-        </div>\
-        <div class='panel-body'>\
-          <p>卵數：{2}</p>\
-          <p>埃及孵化卵數：{3}</p>\
-          <p>白線孵化卵數：{4}</p>\
-          <p>孑孓：{5}</p>\
-          <p>埃及幼蟲：{6}</p>\
-          <p>白線幼蟲：{7}</p>\
-          <p>備註：{8}</p>\
-          <p>過去一個月平均卵數：{9}</p>\
-        </div>\
-      </div>\
-    </div>\
-  ".format(bucketResult['bucket_id'], bucketAddress,
-    bucketResult['egg_num'], bucketResult['egypt_egg_num'],
-    bucketResult['white_egg_num'], bucketResult['larvae_num'],
-    bucketResult['egypt_larvae_num'], bucketResult['white_larvae_num'],
-    bucketResult['survey_note'], bucketResult['avg_egg_num']);
+  var insertHTML = 
+    ('<div class="col-md-3 col-xs-12">' +
+      '<div class="panel panel-default">' +
+        '<div class="panel-heading text-center">' +
+          '<h3 class="panel-title">{0}</h3>' +
+          '<span>{1}</span>' +
+        '</div>' +
+        '<div class="panel-body">' +
+          '<p>卵數：{2}</p>' +
+          '<p>埃及孵化卵數：{3}</p>' +
+          '<p>白線孵化卵數：{4}</p>' +
+          '<p>孑孓：{5}</p>' +
+          '<p>埃及幼蟲：{6}</p>' +
+          '<p>白線幼蟲：{7}</p>' +
+          '<p>備註：{8}</p>' +
+          '<p>過去一個月平均卵數：{9}</p>' +
+        '</div>' +
+      '</div>' +
+    '</div>')
+  .format(bucketResult.bucket_id, bucketAddress,
+    bucketResult.egg_num, bucketResult.egypt_egg_num,
+    bucketResult.white_egg_num, bucketResult.larvae_num,
+    bucketResult.egypt_larvae_num, bucketResult.white_larvae_num,
+    bucketResult.survey_note, bucketResult.avg_egg_num);
   $("#bucket-list").append(insertHTML);
-};
+}
 
 function getKeys(obj) {
   try {
-    keys = Object.keys(obj);
+    var keys = Object.keys(obj);
     return keys;
   } catch(err) {
     return [];
@@ -374,10 +370,10 @@ function updateMap(insertBucketJson) {
   }
   var bucketIds = Object.keys(insertBucketJson);
   bucketIds.forEach(function(bucketId) {
-    var lat = bucketJson[bucketId]['bucket_lat'];
-    var lng = bucketJson[bucketId]['bucket_lng'];
-    var egg_num = insertBucketJson[bucketId]['egg_num'];
-    var avg_egg_num = insertBucketJson[bucketId]['avg_egg_num'];
+    var lat = bucketJson[bucketId].bucket_lat;
+    var lng = bucketJson[bucketId].bucket_lng;
+    var egg_num = insertBucketJson[bucketId].egg_num;
+    var avg_egg_num = insertBucketJson[bucketId].avg_egg_num;
     heat.addLatLng([lat, lng, avg_egg_num]);
 
     var icon = L.icon({
@@ -388,28 +384,28 @@ function updateMap(insertBucketJson) {
     });
 
     var marker = L.marker([lat, lng], {icon: icon})
-                  .bindPopup('\
-                    <table>\
-                      <tr>\
-                        <th>id</th>\
-                        <td>{0}</td>\
-                      </tr>\
-                      <tr>\
-                        <th>卵數</th>\
-                        <td>{1}</td>\
-                      </tr>\
-                    </table>'.format(bucketId, egg_num))
+                  .bindPopup(
+                    ('<table>' +
+                      '<tr>' +
+                        '<th>id</th>' +
+                        '<td>{0}</td>' +
+                      '</tr>' +
+                      '<tr>' +
+                        '<th>卵數</th>' +
+                        '<td>{1}</td>' +
+                      '</tr>' +
+                    '</table>').format(bucketId, egg_num))
                   .addTo(map);
     markerArray.push(marker);
   });
 
   $("#map").show();
   heat.addTo(map);
-};
+}
 
 function getIconStyle(amount){
   var style;
-  if(amount==0){
+  if(amount === 0){
     style = 'legend1';
   } else if (amount > 0 && amount <= 49) {
     style = 'legend2';
@@ -430,7 +426,7 @@ function getIconStyle(amount){
 
 function getIconStyleRGBA(amount){
   var style;
-  if(amount==0){
+  if(amount === 0){
     style = '#00FF9D';
   }else if(amount > 0 && amount <= 49){
     style = '#33CC7E';
