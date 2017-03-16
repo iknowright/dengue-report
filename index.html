@@ -11,6 +11,7 @@
     
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" type="text/javascript" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js" type="text/javascript" charset="utf-8"></script>
@@ -34,50 +35,87 @@
 
           <div class="collapse navbar-collapse" id="header-collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">列表<span class="sr-only">(current)</span></a></li>
-              <li><a href="#">分析</a></li>
+              <li class="active"><a href="#list" data-toggle="tab">列表<span class="sr-only">(current)</span></a></li>
+              <li><a href="#analysis" data-toggle="tab">分析</a></li>
             </ul>
           </div>
         </div>
       </nav>
     </header>
 
-    <div class="container">
-      <div class="row">
-        <div class="col-md-3 col-xs-12">
-          <input type="text" id="weeklyDatePicker" class="form-control" placeholder="選擇日期"/>
-        </div>
-        <div class="col-md-3 col-xs-12">
-          <select class="form-control" id="select-country">
-            <option value="台南">台南</option>
-            <option value="高雄">高雄</option>
-          </select>
-        </div>
-        <div class="col-md-3 col-xs-12">
-          <select class="form-control" id="select-town">
-            <option value="全區">全區</option>
-          </select>
-        </div>
-        <div class="col-md-3 col-xs-12">
-          <select class="form-control" id="select-village">
-            <option value="全里">全里</option>
-          </select>
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane fade in active" id="list">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3 col-xs-12">
+              <input type="text" id="weeklyDatePicker" class="form-control" placeholder="選擇日期"/>
+            </div>
+            <div class="col-md-3 col-xs-12">
+              <select class="form-control" id="select-country">
+                <option value="台南">台南</option>
+                <option value="高雄">高雄</option>
+              </select>
+            </div>
+            <div class="col-md-3 col-xs-12">
+              <select class="form-control" id="select-town">
+                <option value="全區">全區</option>
+              </select>
+            </div>
+            <div class="col-md-3 col-xs-12">
+              <select class="form-control" id="select-village">
+                <option value="全里">全里</option>
+              </select>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="map">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
+          <br />
+          <div class="row" id="bucket-list">
+          </div>
         </div>
       </div>
-      <br />
-      <div class="row">
-        <div class="col-md-1 col-xs-1">
-        </div>
-        <div class="col-md-10 col-xs-10" id="map">
-        </div>
-        <div class="col-md-1 col-xs-1">
+      <div role="tabpanel" class="tab-pane fade" id="analysis">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4 col-xs-12">
+              <input type="text" id="chart-weeklyDatePicker" class="form-control" placeholder="選擇日期"/>
+            </div>
+            <div class="col-md-4 col-xs-12">
+              <select class="form-control" id="chart-select-country">
+                <option value="台南">台南</option>
+                <option value="高雄">高雄</option>
+              </select>
+            </div>
+            <div class="col-md-4 col-xs-12">
+              <select class="form-control" id="chart-select-town">
+                <option value="全區">全區</option>
+              </select>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="chart">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
         </div>
       </div>
-      <br />
-      <div class="row" id="bucket-list">
       </div>
     </div>
+
+    
   </body>
   <link rel="stylesheet" href="style.css" type="text/css" media="all" />
   <script src="app.js" type="text/javascript" charset="utf-8"></script>
+  <script src="analysis.js" type="text/javascript" charset="utf-8"></script>
 </html>

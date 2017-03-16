@@ -67,5 +67,33 @@ label#danger-marker-checkbox img {
 .legend-header{
 	vertical-align: middle;
 	height: 15px;
-  	line-height: 15px;
+  line-height: 15px;
+}
+
+#chart > svg {
+  border: 1px solid #C0C0C0;
+  border-radius: 10px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: dimgrey;
+  stroke-width: 1;
+  opacity: 0.5;
+}
+.axis text {
+  opacity: 0.5;
+}
+
+.dot {
+  stroke-width: 0;
+  fill: dimgrey;
+}
+
+.tooltip {
+  border: 1px solid grey;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
 }
