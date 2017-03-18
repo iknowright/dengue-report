@@ -6,51 +6,58 @@ $("#chart-weeklyDatePicker").on("dp.change", function() {
   var value = $("#chart-weeklyDatePicker").val();
   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+
   $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
   $("#chart-weeklyDatePicker").val(firstDate + "~" + lastDate);
-  updateTownForm();
+
+  window.fetchWeek($("#chart-weeklyDatePicker").val(), function() {
+    updateTownFormAndTitle();
+  });
 });
 
 $("#chart-select-country").change(function() {
   $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
-  updateTownForm();
+
+  window.fetchWeek($("#chart-weeklyDatePicker").val(), function() {
+    updateTownFormAndTitle();
+  });
 });
 
 $("#chart-select-town").change(function() {
   $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
+
   window.fetchWeek($("#chart-weeklyDatePicker").val(), function() {
     appendChart('#chart', $("#chart-weeklyDatePicker").val());
     updateAnalysisTitle();
   });
 });
 
-function updateTownForm() {
-  window.fetchWeek($("#chart-weeklyDatePicker").val(), function() {
-    var week = $("#chart-weeklyDatePicker").val();
-    var country = $("#chart-select-country").val();
-    var townsHasData = window.getKeys(window.allWeekResult[week][country])
-    if (townsHasData.length > 0) {
-      $("#chart-select-town").empty();
+function updateTownFormAndTitle() {
 
-      townsHasData.forEach(function(town) {
-        var insertHTML = "<option value='{0}'>{0}</option>".format(town, town);
-        $("#chart-select-town").append(insertHTML);
-        $('#chart-select-town').trigger("change");
-      });
-    }
-    if (townsHasData.length > 0 && townsHasData.length !== 1) {
-      $("#chart-select-town").prepend("<option value='全區'>全區</option>");
-      $("#chart-select-town").val('全區');
-      $('#chart-select-town').trigger("change");
-    } else if (townsHasData.length === 1) {
-      appendChart('#chart', $("#chart-weeklyDatePicker").val());
-    } else if (townsHasData.length === 0) {
-      $("#chart-select-town").empty();
-      var insertHTML = "<option value='{0}'>{1}</option>".format('無資料', '無資料');
+  var week = $("#chart-weeklyDatePicker").val();
+  var country = $("#chart-select-country").val();
+  var townsHasData = window.getKeys(window.allWeekResult[week][country])
+  if (townsHasData.length > 0) {
+    $("#chart-select-town").empty();
+
+    townsHasData.forEach(function(town) {
+      var insertHTML = "<option value='{0}'>{0}</option>".format(town, town);
       $("#chart-select-town").append(insertHTML);
-    }
-    updateAnalysisTitle();
-  });
+      $('#chart-select-town').trigger("change");
+    });
+  }
+  if (townsHasData.length > 0 && townsHasData.length !== 1) {
+    $("#chart-select-town").prepend("<option value='全區'>全區</option>");
+    $("#chart-select-town").val('全區');
+    $('#chart-select-town').trigger("change");
+  } else if (townsHasData.length === 1) {
+    appendChart('#chart', $("#chart-weeklyDatePicker").val());
+  } else if (townsHasData.length === 0) {
+    $("#chart-select-town").empty();
+    var insertHTML = "<option value='{0}'>{1}</option>".format('無資料', '無資料');
+    $("#chart-select-town").append(insertHTML);
+  }
+  updateAnalysisTitle();
 }
 
 function updateAnalysisTitle() {
@@ -71,8 +78,7 @@ function updateAnalysisTitle() {
   $('#analysis-name').fadeIn('slow');
 }
 
-function appendChart(seletor, week) {
-  console.log(allWeekResult);
+function produceChartData(week) {
   var country = $("#chart-select-country").val();
   var town = $("#chart-select-town").val();
   var data = [];
@@ -95,7 +101,7 @@ function appendChart(seletor, week) {
         if (villageTotalEggNum > 0) {
           data.push({
             'name': village,
-            'rate': 100 * bucketesHasEgg / bucketNum,
+            'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
             'eggNum': villageTotalEggNum
           })
         }
@@ -124,10 +130,15 @@ function appendChart(seletor, week) {
       }
     })
   }
+  return data;
+}
+
+function appendChart(seletor, week) {
+  console.log(allWeekResult);
+  var data = produceChartData(week);
 
   $(seletor).empty();
   if (data.length === 0) {
-
     $("#chart-select-town").empty();
     var insertHTML = "<option value='{0}'>{1}</option>".format('無資料', '無資料');
     $("#chart-select-town").append(insertHTML);

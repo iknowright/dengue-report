@@ -147,7 +147,7 @@ $("#select-country").change(function() {
   var country = $(this).val();
   map.setView(countryView[country], 14);
   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-
+  
   fetchWeek($("#weeklyDatePicker").val(), function() {
     updateTownAndVillageForm();
     insertBucketList($("#weeklyDatePicker").val());
@@ -236,10 +236,11 @@ function updateTownAndVillageForm() {
   var week = $("#weeklyDatePicker").val();
   var country = $("#select-country").val();
   var townsHasData = getKeys(allWeekResult[week][country]);
+  var insertHTML;
 
   $("#select-town").empty();
   if (townsHasData.length === 0) {
-    var insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
+    insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
     $("#select-town").append(insertHTML);
     $("#select-village").empty();
     $("#select-village").append(insertHTML);
@@ -250,10 +251,10 @@ function updateTownAndVillageForm() {
     });
     if (townsHasData.length === 1) {
       $("#select-village").empty();
-      town = townsHasData[0];
+      var town = townsHasData[0];
       var villagesHasData = getKeys(allWeekResult[week][country][town])
       if (villagesHasData.length === 0) {
-        var insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
+        insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
         $("#select-village").append(insertHTML);
       } else {
         villagesHasData.forEach(function(village) {
@@ -261,7 +262,7 @@ function updateTownAndVillageForm() {
           $("#select-village").append(insertHTML);
         });
         if (villagesHasData.length > 1) {
-          var insertHTML = "<option value='{0}'>{0}</option>".format('全里');
+          insertHTML = "<option value='{0}'>{0}</option>".format('全里');
           $("#select-village").prepend(insertHTML);
           $("#select-village").val('全里');
         } else if (villagesHasData.length === 1) {
@@ -269,7 +270,7 @@ function updateTownAndVillageForm() {
         }
       }
     } else if (townsHasData.length > 1) {
-      var insertHTML = "<option value='{0}'>{0}</option>".format('全區');
+      insertHTML = "<option value='{0}'>{0}</option>".format('全區');
       $("#select-town").prepend(insertHTML);
       $("#select-town").val('全區');
       $("#select-village").empty();
@@ -284,16 +285,17 @@ function updateVillageForm() {
   var week = $("#weeklyDatePicker").val();
   var country = $("#select-country").val();
   var town = $("#select-town").val();
+  var insertHTML
   if (town === '全區') {
     $("#select-village").empty();
-    var insertHTML = "<option value='{0}'>{0}</option>".format('全里');
+    insertHTML = "<option value='{0}'>{0}</option>".format('全里');
     $("#select-village").prepend(insertHTML);
     $("#select-village").val('全里');
   }
   var villagesHasData = getKeys(allWeekResult[week][country][town])
   $("#select-village").empty();
   if (villagesHasData.length === 0) {
-    var insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
+    insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
     $("#select-village").append(insertHTML);
   } else {
     villagesHasData.forEach(function(village) {
@@ -303,7 +305,7 @@ function updateVillageForm() {
     if (villagesHasData.length === 1) {
       $("#select-village").trigger('change');
     } else {
-      var insertHTML = "<option value='{0}'>{0}</option>".format('全里');
+      insertHTML = "<option value='{0}'>{0}</option>".format('全里');
       $("#select-village").prepend(insertHTML);
       $("#select-village").val('全里');
     }
@@ -404,7 +406,7 @@ function updateMapTitle() {
   var week = $("#weeklyDatePicker").val();
   var mapTitle;
 
-  if(town === '無資料' || village === '無資料'){
+  if (town === '無資料' || village === '無資料') {
     mapTitle = '<h3 class="text-center">暫無資料</h3>';
   } else {
     mapTitle = '<h3 class="text-center">' + week + ' / ' + country + ' / ' + town + ' / ' + village + '</h3>';
@@ -446,12 +448,12 @@ function updateMap(insertBucketJson) {
   bucketIds.forEach(function(bucketId) {
     var lat = bucketJson[bucketId].bucket_lat;
     var lng = bucketJson[bucketId].bucket_lng;
-    var egg_num = insertBucketJson[bucketId].egg_num;
-    var avg_egg_num = insertBucketJson[bucketId].avg_egg_num;
-    heat.addLatLng([lat, lng, avg_egg_num]);
+    var eggNem = insertBucketJson[bucketId].egg_num;
+    var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
+    heat.addLatLng([lat, lng, avgEggNum]);
 
     var icon = L.icon({
-      iconUrl: getIconStyle(egg_num),
+      iconUrl: getIconStyle(eggNem),
       iconSize: [45, 80], // size of the icon
       popupAnchor: [0, -40],
       iconAnchor: [22, 60]
@@ -468,7 +470,7 @@ function updateMap(insertBucketJson) {
           '<th>卵數</th>' +
           '<td>{1}</td>' +
           '</tr>' +
-          '</table>').format(bucketId, egg_num))
+          '</table>').format(bucketId, eggNem))
       .addTo(map);
     markerArray.push(marker);
   });
