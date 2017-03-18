@@ -6,17 +6,21 @@ $("#chart-weeklyDatePicker").on("dp.change", function() {
   var value = $("#chart-weeklyDatePicker").val();
   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
   $("#chart-weeklyDatePicker").val(firstDate + "~" + lastDate);
   updateTownForm();
 });
 
 $("#chart-select-country").change(function() {
+  $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
   updateTownForm();
 });
 
 $("#chart-select-town").change(function() {
+  $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
   window.fetchWeek($("#chart-weeklyDatePicker").val(), function() {
     appendChart('#chart', $("#chart-weeklyDatePicker").val());
+    updateAnalysisTitle();
   });
 });
 
@@ -42,11 +46,29 @@ function updateTownForm() {
       appendChart('#chart', $("#chart-weeklyDatePicker").val());
     } else if (townsHasData.length === 0) {
       $("#chart-select-town").empty();
-      var insertHTML = "<option value='{0}'>{1}</option>".format('empty', '無資料');
+      var insertHTML = "<option value='{0}'>{1}</option>".format('無資料', '無資料');
       $("#chart-select-town").append(insertHTML);
-      $('#chart').html('<h3 class="text-center">暫無資料</h3>');
     }
+    updateAnalysisTitle();
   });
+}
+
+function updateAnalysisTitle() {
+  var country = $("#chart-select-country").val();
+  var town = $("#chart-select-town").val();
+  var week = $("#chart-weeklyDatePicker").val();
+  var analysisTitle;
+
+  if (town === '無資料') {
+    analysisTitle = '<h3 class="text-center">暫無資料</h3>';
+    $('#chart').empty();
+  } else {
+    analysisTitle = '<h3 class="text-center">' + week + ' / ' + country + ' / ' + town + '</h3>';
+  }
+
+  $('#analysis-name').hide();
+  $('#analysis-name').html(analysisTitle);
+  $('#analysis-name').fadeIn('slow');
 }
 
 function appendChart(seletor, week) {
@@ -106,12 +128,9 @@ function appendChart(seletor, week) {
   $(seletor).empty();
   if (data.length === 0) {
 
-    $(seletor).append('<h3 class="text-center">暫無資料</h3>')
     $("#chart-select-town").empty();
-    var insertHTML = "<option value='{0}'>{1}</option>".format('empty', '無資料');
+    var insertHTML = "<option value='{0}'>{1}</option>".format('無資料', '無資料');
     $("#chart-select-town").append(insertHTML);
-    $('#chart').html('<h3 class="text-center">暫無資料</h3>');
-
   } else {
 
     var margin = { top: 60, right: 80, bottom: 60, left: 80 },
