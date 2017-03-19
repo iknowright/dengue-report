@@ -38,11 +38,11 @@ for file_dict in file_list:
         file_dict['file_name']
     )
 
-    wb = load_workbook(file_dict['file_name'])
+    wb = load_workbook(file_dict['file_name'], read_only=True)
     print (file_dict['file_name'])
     city = file_dict['city']
     for sheet_name in wb.get_sheet_names():
-        sheet_name_match = re.search(r'\d+(年)?第\d+週', sheet_name)
+        sheet_name_match = re.search(r'\d+(年)?第\d+(週|周)', sheet_name)
         if sheet_name == '誘卵桶資訊':
             ws = wb['誘卵桶資訊']
             for row in range(3, ws.max_row+1):
@@ -53,6 +53,11 @@ for file_dict in file_list:
                 bucket_x = ws['B' + str(row)].value
                 bucket_y = ws['C' + str(row)].value
                 if bucket_x == None or bucket_y == None:
+                    continue
+                try:
+                    bucket_x = float(bucket_x)
+                    bucket_y = float(bucket_y)
+                except:
                     continue
 
                 bucket_address = ws['D' + str(row)].value
@@ -118,6 +123,7 @@ for file_dict in file_list:
                     "white_larvae_num": white_larvae_num,
                     "survey_note": survey_note,
                 }
+    wb.close()
 
 for week_range_str in survey_dict.keys():
     week_start = datetime.strptime(week_range_str.split("~")[0], "%Y-%m-%d")
