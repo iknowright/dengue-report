@@ -85,11 +85,20 @@ for file_dict in file_list:
                     village = village + '里';
 
                 egg_num = ws['E' + str(row)].value if ws['E' + str(row)].value != None else '暫無資料'
-                egypt_egg_num = ws['F' + str(row)].value if ws['F' + str(row)].value != None else '暫無資料'
-                white_egg_num = ws['G'+ str(row)].value if ws['G' + str(row)].value != None else '暫無資料'
+                if egg_num == 0:
+                    egypt_egg_num = 0
+                    white_egg_num = 0
+                else:
+                    egypt_egg_num = ws['F' + str(row)].value if ws['F' + str(row)].value != None else '暫無資料'
+                    white_egg_num = ws['G'+ str(row)].value if ws['G' + str(row)].value != None else '暫無資料'
+
                 larvae_num = ws['H' + str(row)].value if ws['H' + str(row)].value != None else '暫無資料'
-                egypt_larvae_num = ws['I' + str(row)].value if ws['I' + str(row)].value != None else '暫無資料'
-                white_larvae_num = ws['J' + str(row)].value if ws['J' + str(row)].value != None else '暫無資料'
+                if larvae_num == 0:
+                    egypt_larvae_num = 0
+                    white_larvae_num = 0
+                else:
+                    egypt_larvae_num = ws['I' + str(row)].value if ws['I' + str(row)].value != None else '暫無資料'
+                    white_larvae_num = ws['J' + str(row)].value if ws['J' + str(row)].value != None else '暫無資料'
                 survey_note = ws['K' + str(row)].value if ws['K' + str(row)].value != None else '無'
 
                 week_start = survey_date - timedelta(days=survey_date.weekday()+1)
