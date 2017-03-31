@@ -3,6 +3,7 @@ import json
 import re
 import twd97
 
+from io import BytesIO
 from datetime import datetime, timedelta
 from pprint import pprint
 from openpyxl import load_workbook
@@ -19,7 +20,7 @@ s3_client = boto3.client('s3')
 file_list = list()
 for key in s3.Bucket('dengue-report-source').objects.all():
     if key.key.endswith(".xlsx"):
-        if len(key.key.split("/")) != 2:
+        if len(key.key.split("/")) < 2:
             continue
         city = key.key.split("/")[0]
         file_name = key.key.split("/")[1]
@@ -32,13 +33,15 @@ for key in s3.Bucket('dengue-report-source').objects.all():
 bucket_dict = dict()
 survey_dict = dict()
 for file_dict in file_list:
-    s3_client.download_file(
-        'dengue-report-source',
-        file_dict['file_key'],
-        file_dict['file_name']
-    )
+    # s3_client.download_file(
+        # 'dengue-report-source',
+        # file_dict['file_key'],
+        # file_dict['file_name']
+    # )
 
-    wb = load_workbook(file_dict['file_name'], read_only=True)
+    # wb = load_workbook(file_dict['file_name'], read_only=True)
+    s3_obj = s3.Object('dengue-report-source', file_dict['file_key'])
+    wb = load_workbook(filename=BytesIO(s3_obj.get()['Body'].read()))
     print (file_dict['file_name'])
     city = file_dict['city']
     for sheet_name in wb.get_sheet_names():
