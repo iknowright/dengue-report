@@ -41,7 +41,7 @@ for file_dict in file_list:
 
     # wb = load_workbook(file_dict['file_name'], read_only=True)
     s3_obj = s3.Object('dengue-report-source', file_dict['file_key'])
-    wb = load_workbook(filename=BytesIO(s3_obj.get()['Body'].read()))
+    wb = load_workbook(filename=BytesIO(s3_obj.get()['Body'].read()), read_only=True)
     print (file_dict['file_name'])
     city = file_dict['city']
     for sheet_name in wb.get_sheet_names():
