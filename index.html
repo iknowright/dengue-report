@@ -36,7 +36,8 @@
           <div class="collapse navbar-collapse" id="header-collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="#list" data-toggle="tab">列表<span class="sr-only">(current)</span></a></li>
-              <li><a href="#analysis" data-toggle="tab">分析</a></li>
+              <li><a href="#analysis" data-toggle="tab">圖表</a></li>
+              <li><a href="#table" data-toggle="tab">表格</a></li>
             </ul>
           </div>
         </div>
@@ -44,6 +45,7 @@
     </header>
 
     <div class="tab-content">
+    <!-- tab 1:list -->
       <div role="tabpanel" class="tab-pane fade in active" id="list">
         <div class="container">
           <div class="row">
@@ -87,6 +89,8 @@
           </div>
         </div>
       </div>
+
+      <!-- tab 2:analysis -->
       <div role="tabpanel" class="tab-pane fade" id="analysis">
         <div class="container">
           <div class="row">
@@ -122,12 +126,49 @@
           </div>
         </div>
       </div>
+
+      <!-- tab 3:table -->
+      <div role="tabpanel" class="tab-pane fade" id="table">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4 col-xs-12">
+              <input type="text" id="table-weeklyDatePicker" class="form-control" placeholder="選擇日期"/>
+            </div>
+            <div class="col-md-4 col-xs-12">
+              <select class="form-control" id="table-select-country">
+                <option value="台南">台南</option>
+                <option value="高雄">高雄</option>
+              </select>
+            </div>
+            <div class="col-md-4 col-xs-12">
+              <select class="form-control" id="table-select-town">
+                <option value="全區">全區</option>
+              </select>
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="table-name">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="table-content">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
-
-    
   </body>
+  
   <link rel="stylesheet" href="style.css" type="text/css" media="all" />
   <script src="app.js" type="text/javascript" charset="utf-8"></script>
   <script src="analysis.js" type="text/javascript" charset="utf-8"></script>
+  <script src="table.js" type="text/javascript" charset="utf-8"></script>
 </html>

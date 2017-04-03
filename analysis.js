@@ -100,7 +100,7 @@ function produceChartData(week) {
         })
         if (villageTotalEggNum > 0) {
           data.push({
-            'name': village,
+            'name': town + ' ' + village,
             'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
             'eggNum': villageTotalEggNum
           })
@@ -123,7 +123,7 @@ function produceChartData(week) {
       })
       if (villageTotalEggNum > 0) {
         data.push({
-          'name': village,
+          'name': town + ' ' + village,
           'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
           'eggNum': villageTotalEggNum
         })
@@ -222,7 +222,7 @@ function appendChart(seletor, week) {
     dots.append('text')
       .attr("class", "dot-label")
       .attr("x", function(d) {
-        return x(d.rate) - 53;
+        return x(d.rate) + 10;
       })
       .attr("y", function(d) {
         return y(d.eggNum) + 5;

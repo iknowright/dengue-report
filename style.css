@@ -7,20 +7,20 @@
 }
 
 /**** map ****/
-table{
+#list table{
 	table-layout: auto;
 	white-space:nowrap;
 }
-th, td {
+#list th, #list td {
   text-align: left;
   line-height: 1.5;
   color: dimgray;
 }
-th{
+#list th{
 	border-right: 1px solid #ddd;
 	padding-right: 10px;
 }
-td{
+#list td{
 	padding-left: 10px;
 }
 .info {
@@ -70,6 +70,8 @@ label#danger-marker-checkbox img {
   line-height: 15px;
 }
 
+/****analysis****/
+
 #chart > svg {
   border: 1px solid #C0C0C0;
   border-radius: 10px;
@@ -96,4 +98,81 @@ label#danger-marker-checkbox img {
   padding: 5px;
   border-radius: 5px;
   white-space: nowrap;
+}
+
+/****table****/
+
+#table table{
+  table-layout: fixed;
+  white-space: break-all;
+  width: 100%;
+  border: 1px solid #C0C0C0;
+  margin-bottom: 60px;
+}
+#table th{
+  box-sizing: border-box;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 15px;
+  letter-spacing: 1px;
+  padding: 12px;
+  margin: 0px;
+  line-height: 30px;
+  border-bottom: 1px solid #C0C0C0;
+  border-right: 1px solid #C0C0C0;
+}
+
+#table td{
+  text-align: right;
+  vertical-align: top;
+  letter-spacing: 0.8px;
+  padding: 12px;
+  border-bottom: 1px solid #C0C0C0;
+  border-right: 1px solid #C0C0C0;
+}
+
+#table ul{
+  margin: 0px;
+  padding: 0px;
+}
+
+#table li{
+  list-style: none;
+  text-align: left;
+  margin: 8px;
+}
+
+#table li .inf{
+  opacity: 0.6;
+}
+
+.read-more-state {
+  display: none;
+}
+
+.read-more-target {
+  display: none;
+}
+
+.read-more-state:checked ~ .read-more-wrap .read-more-target {
+  display: block;
+}
+
+.read-more-state ~ .read-more-trigger:before {
+  content: attr(data-txt);
+}
+
+.read-more-state:checked ~ .read-more-trigger:before {
+  content: '收合';
+}
+
+.read-more-trigger {
+  cursor: pointer;
+  display: inline-block;
+  padding: 0 .5em;
+  color: #666;
+  font-size: .9em;
+  line-height: 2;
+  border: 1px solid #ddd;
+  border-radius: .25em;
 }
