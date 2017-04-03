@@ -147,7 +147,7 @@ $("#select-country").change(function() {
   var country = $(this).val();
   map.setView(countryView[country], 14);
   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-  
+
   fetchWeek($("#weeklyDatePicker").val(), function() {
     updateTownAndVillageForm();
     insertBucketList($("#weeklyDatePicker").val());
@@ -291,23 +291,24 @@ function updateVillageForm() {
     insertHTML = "<option value='{0}'>{0}</option>".format('全里');
     $("#select-village").prepend(insertHTML);
     $("#select-village").val('全里');
-  }
-  var villagesHasData = getKeys(allWeekResult[week][country][town])
-  $("#select-village").empty();
-  if (villagesHasData.length === 0) {
-    insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
-    $("#select-village").append(insertHTML);
   } else {
-    villagesHasData.forEach(function(village) {
-      var insertHTML = "<option value='{0}'>{0}</option>".format(village);
+    var villagesHasData = getKeys(allWeekResult[week][country][town])
+    $("#select-village").empty();
+    if (villagesHasData.length === 0) {
+      insertHTML = "<option value='{0}'>{0}</option>".format('無資料');
       $("#select-village").append(insertHTML);
-    });
-    if (villagesHasData.length === 1) {
-      $("#select-village").trigger('change');
     } else {
-      insertHTML = "<option value='{0}'>{0}</option>".format('全里');
-      $("#select-village").prepend(insertHTML);
-      $("#select-village").val('全里');
+      villagesHasData.forEach(function(village) {
+        var insertHTML = "<option value='{0}'>{0}</option>".format(village);
+        $("#select-village").append(insertHTML);
+      });
+      if (villagesHasData.length === 1) {
+        $("#select-village").trigger('change');
+      } else {
+        insertHTML = "<option value='{0}'>{0}</option>".format('全里');
+        $("#select-village").prepend(insertHTML);
+        $("#select-village").val('全里');
+      }
     }
   }
 }
