@@ -19,7 +19,8 @@ var dangerArray = [];
 var dangerClusterLayer;
 var countryView = {
   '台南': [22.9971, 120.2126],
-  '高雄': [22.6397615, 120.2999183]
+  '高雄': [22.6397615, 120.2999183],
+  '屏東': [22.667431, 120.486307]
 }
 
 $(document).ready(function() {
