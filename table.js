@@ -81,33 +81,16 @@ function updateTableTitle() {
 function produceTableData(week) {
   var country = $("#table-select-country").val();
   var town = $("#table-select-town").val();
+  var towns = [];
   var data = [];
+
   if (town === '全區') {
-    var towns = window.getKeys(window.allWeekResult[week][country]);
-    towns.forEach(function(town) {
-      var villages = window.getKeys(window.allWeekResult[week][country][town]);
-      villages.forEach(function(village) {
-        var bucketes = window.getKeys(window.allWeekResult[week][country][town][village]);
-        var bucketNum = bucketes.length;
-        var bucketesHasEgg = 0;
-        var villageTotalEggNum = 0;
-        bucketes.forEach(function(bucket) {
-          var eggNum = window.allWeekResult[week][country][town][village][bucket].egg_num;
-          if (eggNum > 0 && !isNaN(eggNum)) {
-            bucketesHasEgg += 1;
-            villageTotalEggNum += eggNum;
-          }
-        })
-        if (villageTotalEggNum > 0) {
-          data.push({
-            'name': town + ' ' + village,
-            'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
-            'eggNum': villageTotalEggNum
-          })
-        }
-      })
-    })
+    towns = window.getKeys(window.allWeekResult[week][country]);
   } else {
+    towns.push(town);
+  }
+
+  towns.forEach(function(town) {
     var villages = window.getKeys(window.allWeekResult[week][country][town]);
     villages.forEach(function(village) {
       var bucketes = window.getKeys(window.allWeekResult[week][country][town][village]);
@@ -122,19 +105,20 @@ function produceTableData(week) {
         }
       })
       if (villageTotalEggNum > 0) {
+        // eggNum: 每個里的bucket不一定只有10個，只算加起來的不公平，所以先乘10再除桶子數量
         data.push({
-          'name': village,
+          'name': town + ' ' + village,
           'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
-          'eggNum': villageTotalEggNum
+          'eggNum': (villageTotalEggNum * 10 / bucketes.length).toFixed(2)
         })
       }
     })
-  }
+  })
   return data;
 }
 
 function appendTable(seletor, week) {
-  
+
   var data = produceTableData(week);
   var formatData = new Array(9);
   var stringData = new Array(9);
@@ -142,31 +126,31 @@ function appendTable(seletor, week) {
   for(var i = 0; i < formatData.length ; i ++) formatData[i] = new Array();
 
   data.forEach(function(d){
-    if(d.eggNum >= 30){
+    if(d.eggNum >= 500){
 
       if(d.rate >= 60){
         formatData[0].push(d);
-      }else if(d.eggNum >= 30){
+      }else if(d.rate >= 30){
         formatData[1].push(d);
       }else{
         formatData[2].push(d);
       }
 
-    }else if(d.eggNum >= 15){
+    } else if(d.eggNum >= 251){
 
       if(d.rate >= 60){
         formatData[3].push(d);
-      }else if(d.eggNum >= 30){
+      }else if(d.rate >= 30){
         formatData[4].push(d);
       }else{
         formatData[5].push(d);
       }
 
-    }else {
+    } else {
 
       if(d.rate >= 60){
         formatData[6].push(d);
-      }else if(d.eggNum >= 30){
+      }else if(d.rate >= 30){
         formatData[7].push(d);
       }else{
         formatData[8].push(d);
@@ -187,7 +171,7 @@ function appendTable(seletor, week) {
       }
     })
     if(stringData[i]){
-      
+
       var showMoreText = '顯示其餘 ' + (length - numOfDataToDisplay) + ' 筆資料';
       if(length > numOfDataToDisplay){
         stringData[i] = stringData[i].reduce(
@@ -204,20 +188,20 @@ function appendTable(seletor, week) {
           },'<ul>');
         stringData[i] += '</ul>';
       }
-      
+
     }
-    
-      
+
+
   }
-    
+
 
   console.log(stringData);
 
   var tableHTML = '<table>' +
     '<tr height="40"><th>卵數（個）\\ 陽性率（ % ）</th><th>60% ~ 100%</th><th>30% ~ 59%</th><th>0% ~ 29%</th></tr>' +
-    '<tr height="100"><th>30以上</th><td>{0}</td><td>{1}</td><td>{2}</td></tr>' +
-    '<tr height="100"><th>15 ~ 29</th><td>{3}</td><td>{4}</td><td>{5}</td></tr>' +
-    '<tr height="100"><th>0 ~ 14</th><td>{6}</td><td>{7}</td><td>{8}</td></tr>' +
+    '<tr height="100"><th>500以上</th><td>{0}</td><td>{1}</td><td>{2}</td></tr>' +
+    '<tr height="100"><th>251 ~ 499</th><td>{3}</td><td>{4}</td><td>{5}</td></tr>' +
+    '<tr height="100"><th>0 ~ 250</th><td>{6}</td><td>{7}</td><td>{8}</td></tr>' +
     '</table>';
 
   for(var i = 0; i < 9 ; i++){
