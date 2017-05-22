@@ -78,9 +78,12 @@ for file_dict in file_list:
             for row in range(3, ws.max_row+1):
                 survey_date = ws['A' + str(row)].value
                 bucket_id = ws['B'+ str(row)].value
-                if isinstance(survey_date, datetime) == False or \
+                if isinstance(survey_date, datetime) == False and \
                         bucket_dict.get(bucket_id) == None:
                     break
+                elif isinstance(survey_date, datetime) == False or \
+                        bucket_dict.get(bucket_id) == None:
+                    continue
 
                 area = ws['C' + str(row)].value
                 village = ws['D' + str(row)].value
