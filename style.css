@@ -175,6 +175,7 @@ label#danger-marker-checkbox img {
   line-height: 2;
   border: 1px solid #ddd;
   border-radius: .25em;
+}
 
 .footer {
   position: fixed;
@@ -184,4 +185,8 @@ label#danger-marker-checkbox img {
   line-height: 60px;
   background-color: #f5f5f5;
   z-index: 10000;
+}
+
+.barrel_legend:hover{
+   opacity: 0.5;
 }
