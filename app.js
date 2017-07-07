@@ -83,13 +83,13 @@ $(document).ready(function() {
       div.innerHTML += '<span class = "legend-header"><img src="images/location.svg" width="18px" height="18px">&emsp;&emsp;&emsp;卵數（個）&emsp;&emsp;</img><hr>';
       for (var i = 0; i < grades.length; i++) {
         if (grades[i] === 0) {
-          div.innerHTML +=  '<div class="text-center barrel_legend" id="grade_'+i +'">'+ '<input type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>'+ grades[i] + '<br></div>';
+          div.innerHTML +=  '<div class=" barrel_legend" id="grade_'+i +'">'+ '<input class="legnedcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>'+ grades[i] + '<br></div>';
         } else {
-          div.innerHTML += '<div class="text-center barrel_legend" id="grade_'+i +'">'+'<input type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' <br></div>');
+          div.innerHTML += '<div class=" barrel_legend" id="grade_'+i +'">'+'<input class="legnedcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' <br></div>');
         }
       }
 
-      div.innerHTML += '<div class="text-center barrel_legend" id="grade_other">'+ '<input type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:#cccccc"></i>'  + '其他' + '<br></div>';
+      div.innerHTML += '<div class=" barrel_legend" id="grade_other">'+ '<input class="legnedcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:#cccccc"></i>'  + '其他' + '<br></div>';
 
       return div;
     };
