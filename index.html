@@ -38,6 +38,7 @@
               <li class="active"><a href="#list" data-toggle="tab">列表<span class="sr-only">(current)</span></a></li>
               <li><a href="#analysis" data-toggle="tab">圖表</a></li>
               <li><a href="#table" data-toggle="tab">表格</a></li>
+              <li><a href="#summary_chart" data-toggle="tab">統計圖表</a></li>
             </ul>
           </div>
         </div>
@@ -166,6 +167,56 @@
           </div>
         </div>
       </div>
+
+    <!-- tab 4: summary_chart -->
+      <div role="tabpanel" class="tab-pane fade" id="summary_chart">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3 col-xs-12">
+              <select class="form-control" id="summary_chart-select-year">
+              <option>
+                <option value="2017">2017年</option>
+                <option value="2016">2016年</option>
+              </option>
+              </select>
+            </div>
+            <div class="col-md-3 col-xs-12">
+              <select class="form-control" id="summary_chart-select-country">
+                <option value="台南">台南</option>
+                <option value="高雄">高雄</option>
+                <option value="屏東">屏東</option>
+              </select>
+            </div>
+            <div class="col-md-3 col-xs-12">
+              <select class="form-control" id="summary_chart-select-town">
+                <option value="全區">全區</option>
+              </select>
+            </div>
+            <div class="col-md-3 col-xs-12">
+              <select class="form-control" id="summary_chart-select-village">
+                <option value="全里">全里</option>
+              </select>
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="summary_chart-name">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="summary_chart-content">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
       </div>
     </div>
 
@@ -187,4 +238,5 @@
   <script src="app.js" type="text/javascript" charset="utf-8"></script>
   <script src="analysis.js" type="text/javascript" charset="utf-8"></script>
   <script src="table.js" type="text/javascript" charset="utf-8"></script>
+  <script src="summary_chart.js" type="text/javascript" charset="utf-8"></script>
 </html>

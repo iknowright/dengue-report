@@ -83,13 +83,13 @@ $(document).ready(function() {
       div.innerHTML += '<span class = "legend-header"><img src="images/location.svg" width="18px" height="18px">&emsp;&emsp;&emsp;卵數（個）&emsp;&emsp;</img><hr>';
       for (var i = 0; i < grades.length; i++) {
         if (grades[i] === 0) {
-          div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">' + grades[i] + '<br></div>';
+          div.innerHTML +=  '<div class="text-center barrel_legend" id="grade_'+i +'">'+ '<input type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>'+ grades[i] + '<br></div>';
         } else {
-          div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' +<br></div>');
+          div.innerHTML += '<div class="text-center barrel_legend" id="grade_'+i +'">'+'<input type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' <br></div>');
         }
       }
 
-      div.innerHTML += '<i style="background:#cccccc"></i>' + '<div class="text-center">' + '其他' + '<br></div>';
+      div.innerHTML += '<div class="text-center barrel_legend" id="grade_other">'+ '<input type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:#cccccc"></i>'  + '其他' + '<br></div>';
 
       return div;
     };
@@ -113,6 +113,16 @@ $(document).ready(function() {
         addDangerMarkers(dangerClusterLayer);
       } else {
         removeDangerMarkers(dangerClusterLayer);
+      }
+    })
+    $(".barrel_legend > input").bind("click", function() {
+      var selectedClass='.'+$(this).val()
+      if ($(this).prop("checked")) {
+        console.log($(this).val())
+        $(selectedClass).css('display','block')
+      } else {
+        console.log($(this).val())
+        $(selectedClass).css('display','none')
       }
     })
   });
@@ -458,9 +468,10 @@ function updateMap(insertBucketJson) {
       iconUrl: getIconStyle(eggNem),
       iconSize: [45, 80], // size of the icon
       popupAnchor: [0, -40],
-      iconAnchor: [22, 60]
+      iconAnchor: [22, 60],
+      className: getIconCat(eggNem),
     });
-
+  
     var marker = L.marker([lat, lng], { icon: icon })
       .bindPopup(
         ('<table>' +
@@ -479,6 +490,7 @@ function updateMap(insertBucketJson) {
 
   $("#map").show();
   heat.addTo(map);
+  
 }
 
 function getIconStyle(amount) {
@@ -499,6 +511,25 @@ function getIconStyle(amount) {
     style = 'legend_undefined';
   }
   return 'images/' + style + '.svg';
+}
+function getIconCat(amount) {
+  var category;
+  if (amount === 0) {
+    category = 'grade_0';
+  } else if (amount > 0 && amount <= 49) {
+    category = 'grade_1';
+  } else if (amount >= 50 && amount <= 99) {
+    category = 'grade_2';
+  } else if (amount >= 100 && amount <= 149) {
+    category = 'grade_3';
+  } else if (amount >= 150 && amount <= 199) {
+    category = 'grade_4';
+  } else if (amount >= 200) {
+    category = 'grade_5';
+  } else {
+    category = 'grade_other';
+  }
+  return category;
 }
 
 function getIconStyleRGBA(amount) {
