@@ -175,6 +175,7 @@ label#danger-marker-checkbox img {
   line-height: 2;
   border: 1px solid #ddd;
   border-radius: .25em;
+}
 
 .footer {
   position: fixed;
@@ -184,4 +185,45 @@ label#danger-marker-checkbox img {
   line-height: 60px;
   background-color: #f5f5f5;
   z-index: 10000;
+}
+
+/* barAndLine*/
+
+#barAndLine-content path.line{
+  stroke: orange;
+  stroke-width: 2;
+  fill: none;
+}
+
+#barAndLine-description{
+  padding: 12px;
+  margin: 12px;
+  top: 120px;
+  left: 120px;
+  border: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+}
+#barAndLine-description > div {
+  padding: 12px;
+}
+
+#barAndLine-description * {
+  vertical-align: middle;
+}
+.des-square{
+  background-color: blue;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin: 12px;
+}
+
+.des-line{
+  position: relative;
+  display: inline-block;
+  margin: 22px 12px;
+  width: 30px;
+  height: 5px;
+  background-color: orange;
 }
