@@ -35,9 +35,10 @@
 
           <div class="collapse navbar-collapse" id="header-collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#list" data-toggle="tab">列表<span class="sr-only">(current)</span></a></li>
-              <li><a href="#analysis" data-toggle="tab">圖表</a></li>
+              <li class="active"><a href="#list" data-toggle="tab">散佈圖<span class="sr-only">(current)</span></a></li>
+              <li><a href="#analysis" data-toggle="tab">點圖</a></li>
               <li><a href="#table" data-toggle="tab">表格</a></li>
+              <li><a href="#barAndLine" data-toggle="tab">長條折線圖</a></li>
             </ul>
           </div>
         </div>
@@ -166,8 +167,47 @@
           </div>
         </div>
       </div>
+
+      <!-- tab 4: barAndLine-->
+      <div role="tabpanel" class="tab-pane fade" id="barAndLine">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4 col-xs-12">
+              <input type="text" id="barAndLine-weeklyDatePicker" class="form-control" placeholder="選擇日期" />
+            </div>
+            <div class="col-md-4 col-xs-12">
+              <select class="form-control" id="barAndLine-select-country">
+                      <option value="台南">台南</option>
+                      <option value="高雄">高雄</option>
+                      <option value="屏東">屏東</option>
+                    </select>
+            </div>
+            <div class="col-md-4 col-xs-12">
+              <select class="form-control" id="barAndLine-select-town">
+                      <option value="全區">全區</option>
+                    </select>
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="barAndLine-name">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-md-1 col-xs-1">
+            </div>
+            <div class="col-md-10 col-xs-10" id="barAndLine-content">
+            </div>
+            <div class="col-md-1 col-xs-1">
+            </div>
+          </div>
+        </div>
       </div>
+
     </div>
+    
 
     <footer class="footer">
       <div class="row">
@@ -187,4 +227,5 @@
   <script src="app.js" type="text/javascript" charset="utf-8"></script>
   <script src="analysis.js" type="text/javascript" charset="utf-8"></script>
   <script src="table.js" type="text/javascript" charset="utf-8"></script>
+  <script src="barAndLine.js" type="text/javascript" charset="utf-8"></script>
 </html>
