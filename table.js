@@ -122,11 +122,11 @@ function appendTable(seletor, week) {
   var data = produceTableData(week);
   var formatData = new Array(9);
   var stringData = new Array(9);
-  // formatData.forEach(function(d){ d = new Array(); });
+  var dataInterval = [500, 250, 0]
   for(var i = 0; i < formatData.length ; i ++) formatData[i] = new Array();
 
   data.forEach(function(d){
-    if(d.eggNum >= 500){
+    if(d.eggNum >= dataInterval[0]){
 
       if(d.rate >= 60){
         formatData[0].push(d);
@@ -136,7 +136,7 @@ function appendTable(seletor, week) {
         formatData[2].push(d);
       }
 
-    } else if(d.eggNum >= 251){
+    } else if(d.eggNum >= dataInterval[1]){
 
       if(d.rate >= 60){
         formatData[3].push(d);
@@ -199,9 +199,9 @@ function appendTable(seletor, week) {
 
   var tableHTML = '<table>' +
     '<tr height="40"><th>卵數（個）\\ 陽性率（ % ）</th><th>60% ~ 100%</th><th>30% ~ 59%</th><th>0% ~ 29%</th></tr>' +
-    '<tr height="100"><th>500以上</th><td>{0}</td><td>{1}</td><td>{2}</td></tr>' +
-    '<tr height="100"><th>251 ~ 499</th><td>{3}</td><td>{4}</td><td>{5}</td></tr>' +
-    '<tr height="100"><th>0 ~ 250</th><td>{6}</td><td>{7}</td><td>{8}</td></tr>' +
+    '<tr height="100"><th>' + (dataInterval[0]) + '以上</th><td>{0}</td><td>{1}</td><td>{2}</td></tr>' +
+    '<tr height="100"><th>' + (dataInterval[1]) + '~' + (dataInterval[0] - 1) + '</th><td>{3}</td><td>{4}</td><td>{5}</td></tr>' +
+    '<tr height="100"><th>' + (dataInterval[2]) + '~' + (dataInterval[1] - 1) + '</th><td>{6}</td><td>{7}</td><td>{8}</td></tr>' +
     '</table>';
 
   for(var i = 0; i < 9 ; i++){
