@@ -134,7 +134,6 @@ function produceChartData(week) {
 }
 
 function appendChart(seletor, week) {
-  console.log(allWeekResult);
   var data = produceChartData(week);
 
   $(seletor).empty();

@@ -195,8 +195,6 @@ function appendTable(seletor, week) {
   }
 
 
-  console.log(stringData);
-
   var tableHTML = '<table>' +
     '<tr height="40"><th>卵數（個）\\ 陽性率（ % ）</th><th>60% ~ 100%</th><th>30% ~ 59%</th><th>0% ~ 29%</th></tr>' +
     '<tr height="100"><th>' + (dataInterval[0]) + '以上</th><td>{0}</td><td>{1}</td><td>{2}</td></tr>' +
