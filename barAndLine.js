@@ -78,118 +78,6 @@ function updatebarAndLineTitle() {
   $('#barAndLine-name').html(barAndLineTitle);
   $('#barAndLine-name').fadeIn('slow');
 }
-
-function producebarAndLineData(week) {
-  // var country = $("#barAndLine-select-country").val();
-  // var town = $("#barAndLine-select-town").val();
-  // var towns = [];
-  // var data = [];
-
-  // if (town === '全區') {
-  //   towns = window.getKeys(window.allWeekResult[week][country]);
-  // } else {
-  //   towns.push(town);
-  // }
-
-  // towns.forEach(function (town) {
-  //   var villages = window.getKeys(window.allWeekResult[week][country][town]);
-  //   villages.forEach(function (village) {
-  //     var bucketes = window.getKeys(window.allWeekResult[week][country][town][village]);
-  //     var bucketNum = bucketes.length;
-  //     var bucketesHasEgg = 0;
-  //     var villageTotalEggNum = 0;
-  //     bucketes.forEach(function (bucket) {
-  //       var eggNum = window.allWeekResult[week][country][town][village][bucket].egg_num;
-  //       if (eggNum > 0 && !isNaN(eggNum)) {
-  //         bucketesHasEgg += 1;
-  //         villageTotalEggNum += eggNum;
-  //       }
-  //     })
-  //     if (villageTotalEggNum > 0) {
-  //       // eggNum: 每個里的bucket不一定只有10個，只算加起來的不公平，所以先乘10再除桶子數量
-  //       data.push({
-  //         'name': town + ' ' + village,
-  //         'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
-  //         'eggNum': (villageTotalEggNum * 10 / bucketes.length).toFixed(2)
-  //       })
-  //     }
-  //   })
-  // })
-  // return data;
-}
-
-function appendbarAndLine(seletor, week) {
-
-  // var data = producebarAndLineData(week);
-  // var formatData = new Array(9);
-  // var stringData = new Array(9);
-  var margin = { top: 20, right: 20, bottom: 70, left: 40 },
-    width = 600 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
-
-  // Parse the date / time
-  var parseDate = d3.time.format("%Y-%m").parse;
-
-  var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
-
-  var y = d3.scale.linear().range([height, 0]);
-
-  var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom")
-
-  var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-
-  var svg = d3.select("#barAndLine-content").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform",
-    "translate(" + margin.left + "," + margin.top + ")");
-
-  d3.json("result_2017.json", function (error, data) {
-
-    var KaoData = data['2017']['高雄']
-    
-    var tmpData = KaoData.summary
-
-    x.domain(tmpData.map(function (d) { return d.weekNum; }));
-    y.domain([0, d3.max(tmpData, function (d) { return d.sumEggNum; })]);
-
-    svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", "-.55em")
-      .attr("transform", "rotate(-90)");
-
-    svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-      .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Value ($)");
-
-    svg.selectAll("bar")
-      .data(data)
-      .enter().append("rect")
-      .style("fill", "steelblue")
-      .attr("x", function (d) { return x(d.weekNum); })
-      .attr("width", x.rangeBand())
-      .attr("y", function (d) { return y(d.sumEggNum); })
-      .attr("height", function (d) { return height - y(d.sumEggNum); });
-
-  });
-
-}
 */
 $(window).on('load',function () {
 
@@ -261,6 +149,7 @@ function appendPlot(data, title){
   y2.domain([0, 100]);
 
   var line = d3.svg.line()
+    .defined(function (d) { return d.positiveRate != -10; })
     .x(function (d) {
       return x(d.weekNum);
     })
@@ -288,6 +177,16 @@ function appendPlot(data, title){
     .attr("class", "line")
     .attr("d", line(data))
     .attr("transform", "translate(" + x.rangeBand()/2 + ", 0)")
+  
+  svg.selectAll(".dot")
+    .data(data.filter(function (d) { return d.positiveRate != -10; }))
+    .enter().append("circle")
+    .attr("class", "dot")
+    .attr("cx", line.x())
+    .attr("cy", line.y())
+    .attr("r", 3.5)
+    .attr("transform", "translate(" + x.rangeBand() / 2 + ", 0)")
+
   
   svg.append("text")
   .text(title)
