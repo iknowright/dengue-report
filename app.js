@@ -367,7 +367,8 @@ function insertBucketList(week) {
           var bucketResult = allWeekResult[week][country][town][village][bucketId];
           insertBucketJson[bucketId] = {
             egg_num: allWeekResult[week][country][town][village][bucketId].egg_num,
-            avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num
+            avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num,
+            village: village
           };
           insertBucketHtml(bucketAddress, bucketResult);
         });
@@ -465,6 +466,7 @@ function updateMap(insertBucketJson) {
     var lat = bucketJson[bucketId].bucket_lat;
     var lng = bucketJson[bucketId].bucket_lng;
     var eggNem = insertBucketJson[bucketId].egg_num;
+    var village = insertBucketJson[bucketId].village;
     var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
     heat.addLatLng([lat, lng, avgEggNum]);
 
@@ -487,7 +489,11 @@ function updateMap(insertBucketJson) {
           '<th>卵數</th>' +
           '<td>{1}</td>' +
           '</tr>' +
-          '</table>').format(bucketId, eggNem))
+          '<tr>' +
+          '<th>里</th>' +
+          '<td>{2}</td>' +
+          '</tr>' +
+          '</table>').format(bucketId, eggNem, village))
       .addTo(map);
     markerArray.push(marker);
   });
