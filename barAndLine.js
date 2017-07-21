@@ -1,11 +1,11 @@
 // $('#barAndLine-after-login').hide()
 $('#barAndLine-login').hide()
 $('.glyphicon-warning-sign').hide()
-$('#barAndLine-login-btn').on('click',function(e){
+$('#barAndLine-login-btn').on('click', function (e) {
   e.preventDefault()
   var username = $('#usr').val().toLowerCase()
   var password = $('#pwd').val().toLowerCase()
-  if( username === 'govuser' && password === 'dengue' ) {
+  if (username === 'govuser' && password === 'dengue') {
     $('#barAndLine-login').hide()
     $('#barAndLine-after-login').show()
     $('#barAndLine-select-country').trigger('change')
@@ -42,12 +42,33 @@ $("#barAndLine-select-village").change(function () {
   var village = $('#barAndLine-select-village').val()
 
   d3.json("result_2017.json", function (error, data) {
-    if (town === '全區'){
-      appendPlot(data[2017][country].summary);
-    } else if (village == '全里'){
+    if (town === '全區') {
+      $("#barAndLine-content").empty();
+      var title = '2017 ' + country + ' 統計圖'
+      console.log(title)
+      appendPlot(data[2017][country].summary, title);
+      var towns = window.getKeys(data[2017][country])
+      towns.forEach(function (t) {
+        if (t === 'summary')
+          return
+        var title = '2017 ' + country + t + ' 統計圖'
+        appendPlot(data[2017][country][t].summary, title)
+      })
+    } else if (village == '全里') {
+      $("#barAndLine-content").empty();
+      var title = '2017 ' + country + town + ' 統計圖'
       appendPlot(data[2017][country][town].summary);
-    } else{
-      appendPlot(data[2017][country][town][village].summary);
+      var villages = window.getKeys(data[2017][country][town])
+      villages.forEach(function (v) {
+        if (v === 'summary')
+          return
+        var title = '2017 ' + country + town + v + ' 統計圖'
+        appendPlot(data[2017][country][town][v].summary, title)
+      })
+    } else {
+      $("#barAndLine-content").empty();
+      var title = '2017 ' + country + town + village + ' 統計圖'
+      appendPlot(data[2017][country][town][village].summary, title);
     }
     updatebarAndLineTitle();
   })
@@ -60,7 +81,7 @@ function updatebarAndLineTownForm(data) {
   if (townsHasData.length > 0) {
     $("#barAndLine-select-town").empty();
     townsHasData.forEach(function (town) {
-      if(town === 'summary')
+      if (town === 'summary')
         return
       var insertHTML = "<option value='{0}'>{0}</option>".format(town, town);
       $("#barAndLine-select-town").append(insertHTML);
@@ -87,7 +108,17 @@ function updatebarAndLineVillageForm(data) {
     $("#barAndLine-select-village").val('全里');
     $('#barAndLine-select-village').trigger("change");
   } else {
-    appendPlot(data[2017][country].summary);
+    $("#barAndLine-content").empty();
+    var title = '2017 ' + country + ' 統計圖'
+    console.log(title)
+    appendPlot(data[2017][country].summary, title);
+    var towns = window.getKeys(data[2017][country])
+    towns.forEach(function (t) {
+      if (t === 'summary')
+        return
+      var title = '2017 ' + country + t + ' 統計圖'
+      appendPlot(data[2017][country][t].summary, title)
+    })
     $("#barAndLine-select-village").empty();
     $("#barAndLine-select-village").prepend("<option value='全里'>全里</option>");
   }
@@ -111,26 +142,28 @@ function updatebarAndLineTitle() {
   $('#barAndLine-name').fadeIn('slow');
 }
 
-function appendPlot(data){
-  $("#barAndLine-content").empty();
+function appendPlot(data, title) {
+  console.log(title)
   var margin = {
-    top: 70,
-    right: 60,
-    bottom: 70,
-    left: 60
-  }
-  ,width = $('.container').width()*10/12 - 60 - margin.left - margin.right
-  ,height = 300 - margin.top - margin.bottom;
+      top: 70,
+      right: 60,
+      bottom: 70,
+      left: 60
+    },
+    width = $('.container').width() * 10 / 12 - 60 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
 
   var rangeBand = width / data.length
   var barWidth = rangeBand / 4
 
-  var svg = d3.select("#barAndLine-content").append("svg")
+  var div = d3.select("#barAndLine-content").append("div").style('position', 'relative')
+
+  var svg = div.append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
     .attr("transform",
-    "translate(" + margin.left + "," + margin.top + ")");
+      "translate(" + margin.left + "," + margin.top + ")");
 
   var x = d3.scale.linear().range([0, width - barWidth]);
 
@@ -139,7 +172,7 @@ function appendPlot(data){
 
   var xAxis = d3.svg.axis()
     .scale(x)
-    .tickValues(data.map(function(d){
+    .tickValues(data.map(function (d) {
       return d.weekNum;
     }))
     .orient("bottom")
@@ -164,7 +197,9 @@ function appendPlot(data){
   y2.domain([0, 100]);
 
   var line = d3.svg.line()
-    .defined(function (d) { return d.positiveRate != -10; })
+    .defined(function (d) {
+      return d.positiveRate != -10;
+    })
     .x(function (d) {
       return x(d.weekNum);
     })
@@ -196,7 +231,9 @@ function appendPlot(data){
     .attr("transform", "translate(" + barWidth / 2 + ", 0)")
 
   svg.selectAll(".dot")
-    .data(data.filter(function (d) { return d.positiveRate != -10; }))
+    .data(data.filter(function (d) {
+      return d.positiveRate != -10;
+    }))
     .enter().append("circle")
     .attr("class", "dot")
     .attr("cx", line.x())
@@ -217,7 +254,7 @@ function appendPlot(data){
 
   svg.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(" + barWidth/2 + "," + height + ")")
+    .attr("transform", "translate(" + barWidth / 2 + "," + height + ")")
     .call(xAxis)
     .append("text")
     .style("text-anchor", "end")
@@ -239,10 +276,18 @@ function appendPlot(data){
     .attr("dy", ".71em")
     .style("text-anchor", "end")
     .text("總卵數(個)");
-  
-  var lineTip = d3.select("#barAndLine-content").append("div")
+
+  var svgTitle = svg.append("text")
+    .attr("class", "barAndLine-title")
+    .text(title)
+    .attr("y", -50)
+    .attr("x", width / 2)
+    .attr("text-anchor", "middle")
+  console.log(title)
+
+  var lineTip = div.append("div")
     .attr("class", "barAndLine-tooltip")
-  var barTip = d3.select("#barAndLine-content").append("div")
+  var barTip = div.append("div")
     .attr("class", "barAndLine-tooltip")
 
   // append the rectangle to capture mouse
@@ -252,49 +297,63 @@ function appendPlot(data){
     .style("fill", "none")
     .style("pointer-events", "all")
     .on("mousemove", function mousemove() {
-      
+
 
       var x0 = x.invert(d3.mouse(this)[0] + barWidth / 2),
-        bisect = d3.bisector(function(d){
+        bisect = d3.bisector(function (d) {
           return d.weekNum
         }).left,
         i = bisect(data, x0);
-        d = data[i-1]
+      d = data[i - 1]
 
-        var yPos1 = y(d.sumEggNum)
-        var yPos2 = y2(d.positiveRate)
-        var xPos = x(d.weekNum) + 40
+      var svgMargin = 20
 
-        if (Math.abs(yPos1 - yPos2) <  30){
-          if(yPos1 < yPos2){
-            yPos1 = yPos2 - 30
-          } else {
-            yPos2 = yPos1 - 30
-          }
+      var yPos1 = y(d.sumEggNum)
+      var yPos2 = y2(d.positiveRate)
+      var xPos = x(d.weekNum) + svgMargin
+
+      if (Math.abs(yPos1 - yPos2) < 30) {
+        if (yPos1 < yPos2) {
+          yPos1 = yPos2 - 30
+        } else {
+          yPos2 = yPos1 - 30
         }
+      }
 
-        barTip.transition()
-          .duration(100)
-          .style("opacity", 0.7)
-          .style("left", xPos + 'px')
-          .style("top", '0px')
+      var moveSpeed = 10
 
+      barTip.transition()
+        .duration(moveSpeed)
+        .style("opacity", 0.7)
+        .style("left", xPos + 'px')
+        .style("top", d3.mouse(this)[1] + 'px')
+
+      var prevBarHTML = barTip.html()
+      var prevLineHTML = lineTip.html()
+      var newBarHTML = '卵數：' + d.sumEggNum
+      var newLineHTML = '陽性率：' + d.positiveRate + ' %'
+      if (prevBarHTML != newBarHTML) {
         barTip.html('卵數：' + d.sumEggNum);
-        
-        lineTip.transition()
-          .duration(100)
-          .style("opacity", 0.7)
-          .style("left", xPos + 'px')
-          .style("top", '30px')
+      }
+
+      lineTip.transition()
+        .duration(moveSpeed)
+        .style("opacity", 0.7)
+        .style("left", xPos + 'px')
+        .style("top", (d3.mouse(this)[1] + 30) + 'px')
+
+      if (prevLineHTML != newLineHTML) {
         lineTip.html('陽性率：' + d.positiveRate + ' %');
+      }
     })
     .on("mouseout", function () {
-        barTip.transition()
-          .duration(500)
-          .style("opacity", 0);
-        lineTip.transition()
-          .duration(500)
-          .style("opacity", 0);
+      barTip.transition()
+        .duration(500)
+        .style("opacity", 0)
+        .style('background-color', '#ffffff')
+      lineTip.transition()
+        .duration(500)
+        .style("opacity", 0)
+        .style('background-color', '#ffffff')
     });
 }
-

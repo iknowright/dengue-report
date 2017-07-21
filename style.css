@@ -239,8 +239,9 @@ label#danger-marker-checkbox img {
   position: absolute;
   text-align: center;
   padding: 4px;
+  width: 100px;
   font: 12px sans-serif;
-  background: rgba(255, 255, 255, 0.7);
+  background-color: #ffffff;
   border: 0px;
   border-radius: 8px;
   pointer-events: none;
