@@ -1,3 +1,14 @@
+$('#barAndLine-after-login').hide()
+$('#barAndLine-login-btn').on('click',function(e){
+  e.preventDefault()
+  var username = $('#usr').val().toLowerCase()
+  var password = $('#pwd').val().toLowerCase()
+  if( username === 'govuser' && password === 'dengue' ) {
+    $('#barAndLine-login').hide()
+    $('#barAndLine-after-login').show()
+    $('#barAndLine-select-country').trigger('change')
+  }
+})
 $("#barAndLine-select-country").change(function () {
   $('#barAndLine-name').html('<h3 class="text-center">資料載入中...</h3>');
   var country = $("#barAndLine-select-country").val();
@@ -214,4 +225,4 @@ function appendPlot(data){
     .style("text-anchor", "end")
     .text("總卵數(個)");
 }
-$('#barAndLine-select-country').trigger('change')
+
