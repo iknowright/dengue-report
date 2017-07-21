@@ -1,4 +1,5 @@
-$('#barAndLine-after-login').hide()
+// $('#barAndLine-after-login').hide()
+$('#barAndLine-login').hide()
 $('.glyphicon-warning-sign').hide()
 $('#barAndLine-login-btn').on('click',function(e){
   e.preventDefault()
@@ -120,6 +121,10 @@ function appendPlot(data){
   }
   ,width = $('.container').width()*10/12 - 60 - margin.left - margin.right
   ,height = 300 - margin.top - margin.bottom;
+
+  var rangeBand = width / data.length
+  var barWidth = rangeBand / 4
+
   var svg = d3.select("#barAndLine-content").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -127,13 +132,16 @@ function appendPlot(data){
     .attr("transform",
     "translate(" + margin.left + "," + margin.top + ")");
 
-  var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+  var x = d3.scale.linear().range([0, width - barWidth]);
 
   var y = d3.scale.linear().range([height, 0]);
   var y2 = d3.scale.linear().range([height, 0]);
 
   var xAxis = d3.svg.axis()
     .scale(x)
+    .tickValues(data.map(function(d){
+      return d.weekNum;
+    }))
     .orient("bottom")
 
   var yAxis = d3.svg.axis()
@@ -146,9 +154,10 @@ function appendPlot(data){
     .orient("right")
     .ticks(6)
 
-  x.domain(data.map(function (d) {
-    return d.weekNum;
-  }));
+  x.domain(d3.extent(data.map(function (d) {
+    return +d.weekNum;
+  })));
+
   y.domain([0, d3.max(data, function (d) {
     return d.sumEggNum;
   })]);
@@ -164,26 +173,28 @@ function appendPlot(data){
     });
 
 
+
   svg.selectAll("bar")
     .data(data)
-    .enter().append("rect")
+    .enter()
+    .append("rect")
     .style("fill", "blue")
     .attr("x", function (d) {
-      return x(d.weekNum) + x.rangeBand() / 4;
+      return x(d.weekNum)
     })
-    .attr("width", x.rangeBand()/2)
+    .attr("width", barWidth)
     .attr("y", function (d) {
       return y(d.sumEggNum);
     })
     .attr("height", function (d) {
       return height - y(d.sumEggNum);
-    });
+    })
 
   svg.append("path")
     .attr("class", "line")
     .attr("d", line(data))
-    .attr("transform", "translate(" + x.rangeBand()/2 + ", 0)")
-  
+    .attr("transform", "translate(" + barWidth / 2 + ", 0)")
+
   svg.selectAll(".dot")
     .data(data.filter(function (d) { return d.positiveRate != -10; }))
     .enter().append("circle")
@@ -191,7 +202,7 @@ function appendPlot(data){
     .attr("cx", line.x())
     .attr("cy", line.y())
     .attr("r", 3.5)
-    .attr("transform", "translate(" + x.rangeBand() / 2 + ", 0)")
+    .attr("transform", "translate(" + barWidth / 2 + ", 0)")
 
   svg.append("g")
     .attr("class", "y axis axis2")
@@ -206,7 +217,7 @@ function appendPlot(data){
 
   svg.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("transform", "translate(" + barWidth/2 + "," + height + ")")
     .call(xAxis)
     .append("text")
     .style("text-anchor", "end")
@@ -228,5 +239,62 @@ function appendPlot(data){
     .attr("dy", ".71em")
     .style("text-anchor", "end")
     .text("總卵數(個)");
+  
+  var lineTip = d3.select("#barAndLine-content").append("div")
+    .attr("class", "barAndLine-tooltip")
+  var barTip = d3.select("#barAndLine-content").append("div")
+    .attr("class", "barAndLine-tooltip")
+
+  // append the rectangle to capture mouse
+  svg.append("rect")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .style("fill", "none")
+    .style("pointer-events", "all")
+    .on("mousemove", function mousemove() {
+      
+
+      var x0 = x.invert(d3.mouse(this)[0] + barWidth / 2),
+        bisect = d3.bisector(function(d){
+          return d.weekNum
+        }).left,
+        i = bisect(data, x0);
+        d = data[i-1]
+
+        var yPos1 = y(d.sumEggNum)
+        var yPos2 = y2(d.positiveRate)
+        var xPos = x(d.weekNum) + 40
+
+        if (Math.abs(yPos1 - yPos2) <  30){
+          if(yPos1 < yPos2){
+            yPos1 = yPos2 - 30
+          } else {
+            yPos2 = yPos1 - 30
+          }
+        }
+
+        barTip.transition()
+          .duration(100)
+          .style("opacity", 0.7)
+          .style("left", xPos + 'px')
+          .style("top", '0px')
+
+        barTip.html('卵數：' + d.sumEggNum);
+        
+        lineTip.transition()
+          .duration(100)
+          .style("opacity", 0.7)
+          .style("left", xPos + 'px')
+          .style("top", '30px')
+        lineTip.html('陽性率：' + d.positiveRate + ' %');
+    })
+    .on("mouseout", function () {
+        barTip.transition()
+          .duration(500)
+          .style("opacity", 0);
+        lineTip.transition()
+          .duration(500)
+          .style("opacity", 0);
+    });
 }
 
