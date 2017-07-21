@@ -102,7 +102,7 @@ function produceChartData(week) {
           data.push({
             'name': town + ' ' + village,
             'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
-            'eggNum': villageTotalEggNum
+            'eggNum': (villageTotalEggNum  / bucketNum * 10).toFixed(2)
           })
         }
       })
@@ -125,7 +125,7 @@ function produceChartData(week) {
         data.push({
           'name': town + ' ' + village,
           'rate': 100 * (bucketesHasEgg / bucketNum).toFixed(4),
-          'eggNum': villageTotalEggNum
+          'eggNum': (villageTotalEggNum  / bucketNum * 10).toFixed(2)
         })
       }
     })
@@ -134,7 +134,6 @@ function produceChartData(week) {
 }
 
 function appendChart(seletor, week) {
-  console.log(allWeekResult);
   var data = produceChartData(week);
 
   $(seletor).empty();
