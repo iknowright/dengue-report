@@ -173,14 +173,15 @@
         <div class="container">
           <div class="row" id="barAndLine-login">
             <div class="col-md-4 col-md-offset-4">
-              <form role="form">
+              <form class="form-horizontal">
                 <div class="form-group">
                   <label for="usr">使用者名稱：</label>
                   <input type="text" class="form-control" id="usr">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="pwd-form">
                   <label for="pwd">密碼：</label>
                   <input type="password" class="form-control" id="pwd">
+                  <span class="glyphicon glyphicon-warning-sign form-control-feedback" aria-hidden="true"></span>
                 </div>
                 <button type="submit" class="btn btn-default" id="barAndLine-login-btn">登入</button>
               </form>

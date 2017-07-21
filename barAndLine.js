@@ -1,4 +1,5 @@
 $('#barAndLine-after-login').hide()
+$('.glyphicon-warning-sign').hide()
 $('#barAndLine-login-btn').on('click',function(e){
   e.preventDefault()
   var username = $('#usr').val().toLowerCase()
@@ -7,6 +8,9 @@ $('#barAndLine-login-btn').on('click',function(e){
     $('#barAndLine-login').hide()
     $('#barAndLine-after-login').show()
     $('#barAndLine-select-country').trigger('change')
+  } else {
+    $('.glyphicon-warning-sign').show()
+    $('#pwd-form').addClass('has-error has-feedback')
   }
 })
 $("#barAndLine-select-country").change(function () {
