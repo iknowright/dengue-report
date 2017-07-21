@@ -118,10 +118,8 @@ $(document).ready(function() {
     $(".barrel_legend > input").bind("click", function() {
       var selectedClass='.'+$(this).val()
       if ($(this).prop("checked")) {
-        console.log($(this).val())
         $(selectedClass).css('display','block')
       } else {
-        console.log($(this).val())
         $(selectedClass).css('display','none')
       }
     })
