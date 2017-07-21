@@ -83,13 +83,13 @@ $(document).ready(function() {
       div.innerHTML += '<span class = "legend-header"><img src="images/location.svg" width="18px" height="18px">&emsp;&emsp;&emsp;卵數（個）&emsp;&emsp;</img><hr>';
       for (var i = 0; i < grades.length; i++) {
         if (grades[i] === 0) {
-          div.innerHTML +=  '<div class=" barrel_legend" id="grade_'+i +'">'+ '<input class="legnedcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>'+ grades[i] + '<br></div>';
+          div.innerHTML +=  '<div class=" barrel_legend" id="grade_'+i +'">'+ '<input class="legendcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>'+ grades[i] + '<br></div>';
         } else {
-          div.innerHTML += '<div class=" barrel_legend" id="grade_'+i +'">'+'<input class="legnedcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' <br></div>');
+          div.innerHTML += '<div class=" barrel_legend" id="grade_'+i +'">'+'<input class="legendcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' <br></div>');
         }
       }
 
-      div.innerHTML += '<div class=" barrel_legend" id="grade_other">'+ '<input class="legnedcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:#cccccc"></i>'  + '其他' + '<br></div>';
+      div.innerHTML += '<div class=" barrel_legend" id="grade_other">'+ '<input class="legendcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:#cccccc"></i>'  + '其他' + '<br></div>';
 
       return div;
     };
@@ -150,6 +150,7 @@ $("#weeklyDatePicker").on("dp.change", function() {
     }
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -163,6 +164,7 @@ $("#select-country").change(function() {
     updateTownAndVillageForm();
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -172,6 +174,7 @@ $("#select-town").change(function() {
     updateVillageForm();
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -180,6 +183,7 @@ $("#select-village").change(function() {
   fetchWeek($("#weeklyDatePicker").val(), function() {
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -512,6 +516,7 @@ function getIconStyle(amount) {
   }
   return 'images/' + style + '.svg';
 }
+
 function getIconCat(amount) {
   var category;
   if (amount === 0) {
@@ -549,4 +554,8 @@ function getIconStyleRGBA(amount) {
   }
 
   return style;
+}
+
+function resetLegendCheckbox(){
+  $('.legendcheckbox').prop('checked',true);
 }
