@@ -195,6 +195,10 @@ label#danger-marker-checkbox img {
   fill: none;
 }
 
+#barAndLine-content:last-child {
+  margin-bottom: 64px;
+}
+
 #barAndLine-description{
   padding: 12px;
   margin: 12px;
