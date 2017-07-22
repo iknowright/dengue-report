@@ -83,13 +83,13 @@ $(document).ready(function() {
       div.innerHTML += '<span class = "legend-header"><img src="images/location.svg" width="18px" height="18px">&emsp;&emsp;&emsp;卵數（個）&emsp;&emsp;</img><hr>';
       for (var i = 0; i < grades.length; i++) {
         if (grades[i] === 0) {
-          div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">' + grades[i] + '<br></div>';
+          div.innerHTML +=  '<div class=" barrel_legend" id="grade_'+i +'">'+ '<input class="legendcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>'+ grades[i] + '<br></div>';
         } else {
-          div.innerHTML += '<i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + '<div class="text-center">' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' +<br></div>');
+          div.innerHTML += '<div class=" barrel_legend" id="grade_'+i +'">'+'<input class="legendcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:' + getIconStyleRGBA(grades[i]) + '"></i>' + grades[i] + (grades[i + 1] ? ' &ndash; ' + (grades[i + 1] - 1) + '<br></div>' : ' <br></div>');
         }
       }
 
-      div.innerHTML += '<i style="background:#cccccc"></i>' + '<div class="text-center">' + '其他' + '<br></div>';
+      div.innerHTML += '<div class=" barrel_legend" id="grade_other">'+ '<input class="legendcheckbox" type="checkbox" checked="checked" value="grade_'+i +'"><i style="background:#cccccc"></i>'  + '其他' + '<br></div>';
 
       return div;
     };
@@ -113,6 +113,14 @@ $(document).ready(function() {
         addDangerMarkers(dangerClusterLayer);
       } else {
         removeDangerMarkers(dangerClusterLayer);
+      }
+    })
+    $(".barrel_legend > input").bind("click", function() {
+      var selectedClass='.'+$(this).val()
+      if ($(this).prop("checked")) {
+        $(selectedClass).css('display','block')
+      } else {
+        $(selectedClass).css('display','none')
       }
     })
   });
@@ -140,6 +148,7 @@ $("#weeklyDatePicker").on("dp.change", function() {
     }
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -153,6 +162,7 @@ $("#select-country").change(function() {
     updateTownAndVillageForm();
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -162,6 +172,7 @@ $("#select-town").change(function() {
     updateVillageForm();
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -170,6 +181,7 @@ $("#select-village").change(function() {
   fetchWeek($("#weeklyDatePicker").val(), function() {
     insertBucketList($("#weeklyDatePicker").val());
     updateMapTitle();
+    resetLegendCheckbox();
   });
 });
 
@@ -353,7 +365,8 @@ function insertBucketList(week) {
           var bucketResult = allWeekResult[week][country][town][village][bucketId];
           insertBucketJson[bucketId] = {
             egg_num: allWeekResult[week][country][town][village][bucketId].egg_num,
-            avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num
+            avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num,
+            village: village
           };
           insertBucketHtml(bucketAddress, bucketResult);
         });
@@ -451,6 +464,7 @@ function updateMap(insertBucketJson) {
     var lat = bucketJson[bucketId].bucket_lat;
     var lng = bucketJson[bucketId].bucket_lng;
     var eggNem = insertBucketJson[bucketId].egg_num;
+    var village = insertBucketJson[bucketId].village;
     var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
     heat.addLatLng([lat, lng, avgEggNum]);
 
@@ -458,9 +472,10 @@ function updateMap(insertBucketJson) {
       iconUrl: getIconStyle(eggNem),
       iconSize: [45, 80], // size of the icon
       popupAnchor: [0, -40],
-      iconAnchor: [22, 60]
+      iconAnchor: [22, 60],
+      className: getIconCat(eggNem),
     });
-
+  
     var marker = L.marker([lat, lng], { icon: icon })
       .bindPopup(
         ('<table>' +
@@ -472,13 +487,18 @@ function updateMap(insertBucketJson) {
           '<th>卵數</th>' +
           '<td>{1}</td>' +
           '</tr>' +
-          '</table>').format(bucketId, eggNem))
+          '<tr>' +
+          '<th>里</th>' +
+          '<td>{2}</td>' +
+          '</tr>' +
+          '</table>').format(bucketId, eggNem, village))
       .addTo(map);
     markerArray.push(marker);
   });
 
   $("#map").show();
   heat.addTo(map);
+  
 }
 
 function getIconStyle(amount) {
@@ -501,6 +521,26 @@ function getIconStyle(amount) {
   return 'images/' + style + '.svg';
 }
 
+function getIconCat(amount) {
+  var category;
+  if (amount === 0) {
+    category = 'grade_0';
+  } else if (amount > 0 && amount <= 49) {
+    category = 'grade_1';
+  } else if (amount >= 50 && amount <= 99) {
+    category = 'grade_2';
+  } else if (amount >= 100 && amount <= 149) {
+    category = 'grade_3';
+  } else if (amount >= 150 && amount <= 199) {
+    category = 'grade_4';
+  } else if (amount >= 200) {
+    category = 'grade_5';
+  } else {
+    category = 'grade_other';
+  }
+  return category;
+}
+
 function getIconStyleRGBA(amount) {
   var style;
   if (amount === 0) {
@@ -518,4 +558,8 @@ function getIconStyleRGBA(amount) {
   }
 
   return style;
+}
+
+function resetLegendCheckbox(){
+  $('.legendcheckbox').prop('checked',true);
 }

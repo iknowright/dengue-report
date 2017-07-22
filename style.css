@@ -6,6 +6,7 @@
   height: 600px;
 }
 
+
 /**** map ****/
 #map table{
 	table-layout: auto;
@@ -70,6 +71,10 @@ label#danger-marker-checkbox img {
   line-height: 15px;
 }
 
+
+.legnedcheckbox{
+  padding-right: 5px;
+}
 /****analysis****/
 
 #chart > svg {
@@ -258,3 +263,8 @@ label#danger-marker-checkbox img {
   margin: 4px;
   font-weight: 900;
 }
+
+.barrel_legend:hover{
+   opacity: 0.5;
+}
+
