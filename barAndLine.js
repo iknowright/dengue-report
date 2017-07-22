@@ -182,6 +182,7 @@ function appendPlot(data, title, maxSumEggNum) {
     .tickValues(data.map(function (d) {
       return d.weekNum;
     }))
+    .tickFormat(d3.format(".0f"))    
     .orient("bottom")
 
   var yAxis = d3.svg.axis()
