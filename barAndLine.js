@@ -289,7 +289,6 @@ function appendPlot(data, title, maxSumEggNum) {
     .attr("y", -50)
     .attr("x", width / 2)
     .attr("text-anchor", "middle")
-  console.log(title)
 
   var barLineTooltip = div.append("div")
     .attr("class", "barAndLine-tooltip")
@@ -325,7 +324,7 @@ function appendPlot(data, title, maxSumEggNum) {
 
       var prevHTML = barLineTooltip.html()
       var positiveRate = d.positiveRate != -10 ? d.positiveRate : 0
-      var newHTML = '第' + d.weekNum + '週' + '<br><br>' + '卵數：' + d.sumEggNum + '<br>' + '陽性率：' + positiveRate + ' %'
+      var newHTML = '<div>第' + d.weekNum + '週</div>' + '　卵數：' + d.sumEggNum + '<br>' + '陽性率：' + positiveRate + ' %'
       if (prevHTML != newHTML) {
         barLineTooltip.html(newHTML);
       }
