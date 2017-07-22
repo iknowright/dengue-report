@@ -291,10 +291,7 @@ function appendPlot(data, title, maxSumEggNum) {
     .attr("text-anchor", "middle")
   console.log(title)
 
-  var lineTip = div.append("div")
-    .attr("class", "barAndLine-tooltip")
-    .style('opacity', 0)
-  var barTip = div.append("div")
+  var barLineTooltip = div.append("div")
     .attr("class", "barAndLine-tooltip")
     .style('opacity', 0)
 
@@ -316,51 +313,25 @@ function appendPlot(data, title, maxSumEggNum) {
 
       var svgMargin = 10
 
-      var yPos1 = y(d.sumEggNum)
-      var yPos2 = y2(d.positiveRate)
       var xPos = x(d.weekNum) + svgMargin + barWidth/2
-
-      if (Math.abs(yPos1 - yPos2) < 30) {
-        if (yPos1 < yPos2) {
-          yPos1 = yPos2 - 30
-        } else {
-          yPos2 = yPos1 - 30
-        }
-      }
 
       var moveSpeed = 10
 
-      barTip.transition()
+      barLineTooltip.transition()
         .duration(moveSpeed)
         .style("opacity", 0.7)
         .style("left", xPos + 'px')
         .style("top", d3.mouse(this)[1] + 'px')
 
-      var prevBarHTML = barTip.html()
-      var prevLineHTML = lineTip.html()
-      var newBarHTML = '卵數：' + d.sumEggNum
-      var newLineHTML = '陽性率：' + d.positiveRate + ' %'
-      if (prevBarHTML != newBarHTML) {
-        barTip.html('卵數：' + d.sumEggNum);
-      }
-
-      lineTip.transition()
-        .duration(moveSpeed)
-        .style("opacity", 0.7)
-        .style("left", xPos + 'px')
-        .style("top", (d3.mouse(this)[1] + 30) + 'px')
-
-      if (prevLineHTML != newLineHTML) {
-        var positiveRate = d.positiveRate != -10 ? d.positiveRate : 0
-        lineTip.html('陽性率：' + positiveRate + ' %');
+      var prevHTML = barLineTooltip.html()
+      var positiveRate = d.positiveRate != -10 ? d.positiveRate : 0
+      var newHTML = '第' + d.weekNum + '週' + '<br><br>' + '卵數：' + d.sumEggNum + '<br>' + '陽性率：' + positiveRate + ' %'
+      if (prevHTML != newHTML) {
+        barLineTooltip.html(newHTML);
       }
     })
     .on("mouseout", function () {
-      barTip.transition()
-        .duration(500)
-        .style("opacity", 0)
-        .style('background-color', '#ffffff')
-      lineTip.transition()
+      barLineTooltip.transition()
         .duration(500)
         .style("opacity", 0)
         .style('background-color', '#ffffff')
