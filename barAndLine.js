@@ -17,7 +17,7 @@ $("#barAndLine-select-country").change(function () {
   $('#barAndLine-name').html('<h3 class="text-center">資料載入中...</h3>');
   var country = $("#barAndLine-select-country").val();
 
-  d3.json("result_2017.json", function (error, data) {
+  d3.json("https://s3-ap-northeast-1.amazonaws.com/dengue-report-dest/summary-data/summary_region_result.json", function (error, data) {
     updatebarAndLineTownForm(data);
     updatebarAndLineTitle();
   })
