@@ -153,15 +153,16 @@ function updatebarAndLineTitle() {
 function appendPlot(data, title, maxSumEggNum) {
   var margin = {
       top: 70,
-      right: 60,
+      right: 80,
       bottom: 120,
-      left: 60
+      left: 80
     },
     width = $('.container').width() * 10 / 12 - 60 - margin.left - margin.right,
     height = 350 - margin.top - margin.bottom;
 
   var rangeBand = width / data.length
   var barWidth = rangeBand / 4
+  var axisMargin = 24
 
   var div = d3.select("#barAndLine-content").append("div").style('position', 'relative')
 
@@ -249,7 +250,7 @@ function appendPlot(data, title, maxSumEggNum) {
 
   svg.append("g")
     .attr("class", "y axis axis2")
-    .attr("transform", "translate(" + width + ", 0)")
+    .attr("transform", "translate(" + (width + axisMargin) + ", 0)")
     .call(yAxis2)
     .append("text")
     .style("text-anchor", "end")
@@ -275,6 +276,7 @@ function appendPlot(data, title, maxSumEggNum) {
 
   svg.append("g")
     .attr("class", "y axis")
+    .attr("transform", "translate(" + (- axisMargin) + ", 0)")
     .call(yAxis)
     .append("text")
     .attr("transform", "rotate(-90)")
@@ -310,7 +312,7 @@ function appendPlot(data, title, maxSumEggNum) {
         i = bisect(data, x0);
       d = data[i - 1]
 
-      var svgMargin = 10
+      var svgMargin = 30
 
       var xPos = x(d.weekNum) + svgMargin + barWidth/2
 
@@ -318,13 +320,13 @@ function appendPlot(data, title, maxSumEggNum) {
 
       barLineTooltip.transition()
         .duration(moveSpeed)
-        .style("opacity", 0.7)
+        .style("opacity", 0.95)
         .style("left", xPos + 'px')
         .style("top", d3.mouse(this)[1] + 'px')
 
       var prevHTML = barLineTooltip.html()
       var positiveRate = d.positiveRate != -10 ? d.positiveRate : 0
-      var newHTML = '<div>第' + d.weekNum + '週</div>' + '　卵數：' + d.sumEggNum + '<br>' + '陽性率：' + positiveRate + ' %'
+      var newHTML = '<div>第' + d.weekNum + '週</div>' + '卵數：' + d.sumEggNum + '<br>' + '陽性率：' + positiveRate + ' %'
       if (prevHTML != newHTML) {
         barLineTooltip.html(newHTML);
       }
