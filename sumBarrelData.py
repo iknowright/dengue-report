@@ -24,8 +24,7 @@ def SummerizeWeekDataAWS(filename, content):
         int(dateMonth),
         int(dateDay)).strftime('%U'))
     print(weekNum)
-#        YearWeek = str(dataYear)+'-'+ str(weekNum)
-#        print(filename+' '+YearWeek)
+
     summaryData[dataYear] = {}
     # add county(Tainan, Kaoshuing, Pingtung)
     for county in json_data:
@@ -96,6 +95,9 @@ def SummerizeWeekDataAWS(filename, content):
         countyDic['summary']['effectiveBucketNum'] = effectiveBucketNumCounty
         if effectiveBucketNumCounty != 0:
             countyDic['summary']['positiveRate'] = round(positiveBucketNumCounty / effectiveBucketNumCounty, 1)*100
+            #print('Positive Rate: ' + str(countyDic['summary']['positiveRate']))
+            #print('positiveBucketNumCounty ' + str(positiveBucketNumCounty))
+            #print('effectiveBucketNumCounty ' + str(effectiveBucketNumCounty))
         else:
             countyDic['summary']['positiveRate'] = -10
     return summaryData
@@ -108,7 +110,7 @@ resultData = {}
 for obj in bucket.objects.filter(Prefix='week/'):
     if '.json' in obj.key and '2016' not in obj.key:
         key = obj.key.replace('week/', '')
-        body = obj.get()['Body'].read()
+        body = obj.get()['Body'].read().decode('utf-8')
         weeklyResult = SummerizeWeekDataAWS(key, body)
         for year in weeklyResult:
             if year not in resultData:
