@@ -171,8 +171,9 @@ function appendChart(seletor, week) {
 
     x.domain([0, 100]);
     y.domain([0, d3.max(data, function(d) {
-      return d.eggNum
+      return parseFloat(d.eggNum)
     })]);
+
 
     var dots = svg.selectAll(".dot")
       .data(data)
