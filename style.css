@@ -105,6 +105,10 @@ label#danger-marker-checkbox img {
   white-space: nowrap;
 }
 
+.tab-content {
+  margin-bottom: 72px !important;
+}
+
 /****table****/
 
 #table-content table{
