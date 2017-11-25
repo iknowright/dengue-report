@@ -1,23 +1,58 @@
-import boto3
 import json
+import logging
 import re
-import twd97
-
+import sys
+from datetime import date, datetime, timedelta
 from io import BytesIO
-from datetime import datetime, timedelta
 from pprint import pprint
+
+import boto3
+import twd97
 from openpyxl import load_workbook
+
 
 def generate_week_str(now_week_start, week_ago_num):
     week_ago_start = now_week_start - timedelta(days=7 * week_ago_num)
-    week_ago_end = now_week_start - timedelta(days=1 * week_ago_num)
+    week_ago_end = week_ago_start + timedelta(days=6)
     return '%s~%s' % (
         week_ago_start.strftime("%Y-%m-%d"), week_ago_end.strftime("%Y-%m-%d"))
 
 
+log = logging.getLogger('')
+log.setLevel(logging.DEBUG)
+format = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+
+ch = logging.StreamHandler(sys.stdout)
+ch.setFormatter(format)
+log.addHandler(ch)
+
+parselogger = logging.getLogger('parse')
+sheetlogger = logging.getLogger('sheet')
+progresslogger = logging.getLogger('progress')
+
 s3 = boto3.resource('s3')
 s3_client = boto3.client('s3')
 file_list = list()
+
+weeknum = int(datetime.now().strftime('%U'))
+accept_weeks = []
+this_week_start = date.today() - timedelta(days=date.today().weekday() + 1)
+this_week_str = generate_week_str(this_week_start, 0)
+last_week_str = generate_week_str(this_week_start, 1)
+update_weeks =  [this_week_str, last_week_str]
+
+# Updating 2 weeks data, which avg_egg_count need 5 week to calc, so accept total 6 weeks data
+accept_weeks.append(str(weeknum))
+accept_weeks.append(str(weeknum - 1))
+accept_weeks.append(str(weeknum - 2))
+accept_weeks.append(str(weeknum - 3))
+accept_weeks.append(str(weeknum - 4))
+accept_weeks.append(str(weeknum - 5))
+
+parselogger.info('update_weeks: ' + str(update_weeks))
+parselogger.info('accept_week: ' + str(accept_weeks))
+
 for key in s3.Bucket('dengue-report-source').objects.all():
     if key.key.endswith(".xlsx"):
         if len(key.key.split("/")) < 2:
@@ -42,12 +77,14 @@ for file_dict in file_list:
     # wb = load_workbook(file_dict['file_name'], read_only=True)
     s3_obj = s3.Object('dengue-report-source', file_dict['file_key'])
     wb = load_workbook(filename=BytesIO(s3_obj.get()['Body'].read()), read_only=True)
-    print (file_dict['file_name'])
+    parselogger.info(file_dict['file_name'])
     city = file_dict['city']
     for sheet_name in wb.get_sheet_names():
-        sheet_name_match = re.search(r'\d+(年)?第\d+(週|周)', sheet_name)
+        sheet_name_match = re.search(r'\d+(年)?第(\d+)(週|周)', sheet_name)
         if sheet_name == '誘卵桶資訊':
             ws = wb['誘卵桶資訊']
+            sheetlogger.info(sheet_name)
+            progresslogger.info('Bucket handle begin')
             for row in range(3, ws.max_row+1):
                 bucket_id = ws['A' + str(row)].value
                 if bucket_id == None:
@@ -72,9 +109,11 @@ for file_dict in file_list:
                     # 'bucket_address': bucket_address,
                     # 'bucket_note': bucket_note
                 }
-        elif sheet_name_match:
+            progresslogger.info('finish ' + str(ws.max_row + 1) + ' buckets')
+        elif sheet_name_match and sheet_name_match.group(2) in accept_weeks:
             ws = wb[sheet_name]
-            print (sheet_name)
+            sheetlogger.info(sheet_name)
+            progresslogger.info('record handle begin')
             for row in range(3, ws.max_row+1):
                 survey_date = ws['A' + str(row)].value
                 bucket_id = ws['B'+ str(row)].value
@@ -138,9 +177,12 @@ for file_dict in file_list:
                     "white_larvae_num": white_larvae_num,
                     "survey_note": survey_note,
                 }
+            progresslogger.info('finish ' + str(ws.max_row + 1) + ' records')
     wb.close()
 
-for week_range_str in survey_dict.keys():
+parselogger.info('avg_egg_num counting begin')
+parselogger.info(str(survey_dict))
+for week_range_str in update_weeks:
     week_start = datetime.strptime(week_range_str.split("~")[0], "%Y-%m-%d")
     week_str_list = list()
     week_str_list.append(generate_week_str(week_start, 1))
@@ -160,21 +202,24 @@ for week_range_str in survey_dict.keys():
                         except:
                             continue
                     survey_dict[week_range_str][city][area][village][bucket_id]['avg_egg_num'] = int(total_egg_num / len(week_str_list))
+parselogger.info('avg_egg_num counting end')
 
 s3.Object("dengue-report-dest", "bucket-list.json").put(
     ACL='public-read',
     Body=json.dumps(bucket_dict, indent=4, ensure_ascii=False)
 )
-
-for week_range_str in survey_dict.keys():
+parselogger.info('upload s3 begin')
+for week_range_str in update_weeks:
     s3.Object("dengue-report-dest", "week/%s.json" % (week_range_str)).put(
         ACL='public-read',
         Body=json.dumps(survey_dict[week_range_str], ensure_ascii=False)
     )
+    # DEBUGGING
     # with open('%s.json' % (week_range_str), 'w') as myfile:
-        # json.dump(
-            # survey_dict[week_range_str],
-            # myfile,
-            # indent=4,
-            # ensure_ascii=False
-        # )
+    #     json.dump(
+    #         survey_dict[week_range_str],
+    #         myfile,
+    #         indent=4,
+    #         ensure_ascii=False
+    #     )
+parselogger.info('upload s3 end')
