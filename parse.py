@@ -87,12 +87,12 @@ for file_dict in file_list:
             progresslogger.info('Bucket handle begin')
             for row in range(3, ws.max_row+1):
                 bucket_id = ws['A' + str(row)].value
-                if bucket_id == None:
+                if bucket_id is None:
                     continue
 
                 bucket_x = ws['B' + str(row)].value
                 bucket_y = ws['C' + str(row)].value
-                if bucket_x == None or bucket_y == None:
+                if bucket_x is None or bucket_y is None:
                     continue
                 try:
                     bucket_x = float(bucket_x)
@@ -102,10 +102,16 @@ for file_dict in file_list:
 
                 bucket_address = ws['D' + str(row)].value
                 bucket_note = ws['E' + str(row)].value
+                bucket_inside_or_outside = ws['F' + str(row)].value
+
+                if bucket_inside_or_outside is None or bucket_inside_or_outside == '外':
+                    bucket_inside_or_outside = '外'
+
                 bucket_lat, bucket_lng = twd97.towgs84(bucket_x, bucket_y)
                 bucket_dict[bucket_id] = {
                     'bucket_lat': bucket_lat,
                     'bucket_lng': bucket_lng,
+                    'bucket_inside_or_outside': bucket_inside_or_outside,
                     # 'bucket_address': bucket_address,
                     # 'bucket_note': bucket_note
                 }
@@ -117,27 +123,27 @@ for file_dict in file_list:
             for row in range(3, ws.max_row+1):
                 survey_date = ws['A' + str(row)].value
                 bucket_id = ws['B'+ str(row)].value
-                if isinstance(survey_date, datetime) == False and \
-                        bucket_dict.get(bucket_id) == None:
+                if (isinstance(survey_date, datetime) is False and
+                    bucket_dict.get(bucket_id) is None):
                     break
-                elif isinstance(survey_date, datetime) == False or \
-                        bucket_dict.get(bucket_id) == None:
+                elif (isinstance(survey_date, datetime) is False or
+                      bucket_dict.get(bucket_id) is None):
                     continue
 
                 area = ws['C' + str(row)].value
                 village = ws['D' + str(row)].value
                 if '里' not in village:
-                    village = village + '里';
+                    village = village + '里'
 
                 egg_num = ws['E' + str(row)].value if ws['E' + str(row)].value != None else '暫無資料'
                 if egg_num == 0:
                     egypt_egg_num = 0
                     white_egg_num = 0
                 else:
-                    egypt_egg_num = ws['F' + str(row)].value if ws['F' + str(row)].value != None else '暫無資料'
-                    white_egg_num = ws['G'+ str(row)].value if ws['G' + str(row)].value != None else '暫無資料'
+                    egypt_egg_num = ws['F' + str(row)].value if ws['F' + str(row)].value is not None else '暫無資料'
+                    white_egg_num = ws['G'+ str(row)].value if ws['G' + str(row)].value is not None else '暫無資料'
 
-                larvae_num = ws['H' + str(row)].value if ws['H' + str(row)].value != None else '暫無資料'
+                larvae_num = ws['H' + str(row)].value if ws['H' + str(row)].value is not None else '暫無資料'
                 if larvae_num == 0:
                     egypt_larvae_num = 0
                     white_larvae_num = 0
@@ -151,19 +157,19 @@ for file_dict in file_list:
                 week_range_str = '%s~%s' % (
                     week_start.strftime("%Y-%m-%d"), week_end.strftime("%Y-%m-%d"))
 
-                if survey_dict.get(week_range_str) == None:
+                if survey_dict.get(week_range_str) is None:
                     survey_dict[week_range_str] = dict()
                     survey_dict[week_range_str][city] = dict()
                     survey_dict[week_range_str][city][area] = dict()
                     survey_dict[week_range_str][city][area][village] = dict()
-                elif survey_dict[week_range_str].get(city) == None:
+                elif survey_dict[week_range_str].get(city) is None:
                     survey_dict[week_range_str][city] = dict()
                     survey_dict[week_range_str][city][area] = dict()
                     survey_dict[week_range_str][city][area][village] = dict()
-                elif survey_dict[week_range_str][city].get(area) == None:
+                elif survey_dict[week_range_str][city].get(area) is None:
                     survey_dict[week_range_str][city][area] = dict()
                     survey_dict[week_range_str][city][area][village] = dict()
-                elif survey_dict[week_range_str][city][area].get(village) == None:
+                elif survey_dict[week_range_str][city][area].get(village) is None:
                     survey_dict[week_range_str][city][area][village] = dict()
 
                 survey_dict[week_range_str][city][area][village][bucket_id] = {
