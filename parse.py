@@ -36,6 +36,7 @@ s3_client = boto3.client('s3')
 file_list = list()
 
 weeknum = int(datetime.now().strftime('%U'))
+this_year_str = datetime.now().strftime('%Y')
 accept_weeks = []
 this_week_start = date.today() - timedelta(days=date.today().weekday() + 1)
 this_week_str = generate_week_str(this_week_start, 0)
@@ -80,7 +81,7 @@ for file_dict in file_list:
     parselogger.info(file_dict['file_name'])
     city = file_dict['city']
     for sheet_name in wb.get_sheet_names():
-        sheet_name_match = re.search(r'\d+(年)?第(\d+)(週|周)', sheet_name)
+        sheet_name_match = re.search(r'(\d+)(年)?第(\d+)(週|周)', sheet_name)
         if sheet_name == '誘卵桶資訊':
             ws = wb['誘卵桶資訊']
             sheetlogger.info(sheet_name)
@@ -116,7 +117,7 @@ for file_dict in file_list:
                     # 'bucket_note': bucket_note
                 }
             progresslogger.info('finish ' + str(ws.max_row + 1) + ' buckets')
-        elif sheet_name_match and sheet_name_match.group(2) in accept_weeks:
+        elif sheet_name_match and sheet_name_match.group(3) in accept_weeks and sheet_name_match.group(1) == this_year_str:
             ws = wb[sheet_name]
             sheetlogger.info(sheet_name)
             progresslogger.info('record handle begin')
