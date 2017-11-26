@@ -188,7 +188,7 @@ for file_dict in file_list:
     wb.close()
 
 parselogger.info('avg_egg_num counting begin')
-parselogger.info(str(survey_dict))
+# parselogger.info(str(survey_dict))
 for week_range_str in update_weeks:
     week_start = datetime.strptime(week_range_str.split("~")[0], "%Y-%m-%d")
     week_str_list = list()
