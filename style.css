@@ -289,7 +289,7 @@ label#danger-marker-checkbox img {
 
 @media only screen and (max-width: 980px) {
     .footer {
-        font-size: 0.5rem;
+        font-size: 1.2rem;
         letter-spacing: 0.2px;
         text-align: left;
         padding: 8px;
