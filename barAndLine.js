@@ -45,38 +45,30 @@ $("#barAndLine-select-village").change(function () {
     if (town === '全區') {
       $("#barAndLine-content").empty();
       var title = '2017 ' + country + ' 統計圖'
-      var maxSumEgg = d3.max(data[2017][country].summary, function (d) {
-      return d.sumEggNum;
-      })
-      appendPlot(data[2017][country].summary, title, maxSumEgg);
+
+      appendPlot(data[2017][country].summary, title)
       var towns = window.getKeys(data[2017][country])
       towns.forEach(function (t) {
         if (t === 'summary')
           return
         var title = '2017 ' + country + t + ' 統計圖'
-        appendPlot(data[2017][country][t].summary, title, maxSumEgg)
+        appendPlot(data[2017][country][t].summary, title)
       })
     } else if (village == '全里') {
       $("#barAndLine-content").empty();
       var title = '2017 ' + country + town + ' 統計圖'
-      var maxSumEgg = d3.max(data[2017][country][town].summary, function (d) {
-      return d.sumEggNum;
-      })
-      appendPlot(data[2017][country][town].summary, title, maxSumEgg);
+      appendPlot(data[2017][country][town].summary, title)
       var villages = window.getKeys(data[2017][country][town])
       villages.forEach(function (v) {
         if (v === 'summary')
           return
         var title = '2017 ' + country + town + v + ' 統計圖'
-        appendPlot(data[2017][country][town][v].summary, title, maxSumEgg)
+        appendPlot(data[2017][country][town][v].summary, title)
       })
     } else {
       $("#barAndLine-content").empty();
       var title = '2017 ' + country + town + village + ' 統計圖'
-      var maxSumEgg = d3.max(data[2017][country][town][village].summary, function (d) {
-      return d.sumEggNum;
-      })
-      appendPlot(data[2017][country][town][village].summary, title, maxSumEgg);
+      appendPlot(data[2017][country][town][village].summary, title);
     }
     updatebarAndLineTitle();
   })
@@ -117,16 +109,13 @@ function updatebarAndLineVillageForm(data) {
   } else {
     $("#barAndLine-content").empty();
     var title = '2017 ' + country + ' 統計圖'
-    var maxSumEgg = d3.max(data[2017][country].summary, function (d) {
-    return d.sumEggNum;
-    })
-    appendPlot(data[2017][country].summary, title, maxSumEgg);
+    appendPlot(data[2017][country].summary, title)
     var towns = window.getKeys(data[2017][country])
     towns.forEach(function (t) {
       if (t === 'summary')
         return
       var title = '2017 ' + country + t + ' 統計圖'
-      appendPlot(data[2017][country][t].summary, title, maxSumEgg)
+      appendPlot(data[2017][country][t].summary, title)
     })
     $("#barAndLine-select-village").empty();
     $("#barAndLine-select-village").prepend("<option value='全里'>全里</option>");
@@ -151,7 +140,7 @@ function updatebarAndLineTitle() {
   $('#barAndLine-name').fadeIn('slow');
 }
 
-function appendPlot(data, title, maxSumEggNum) {
+function appendPlot(data, title) {
   var margin = {
       top: 70,
       right: 80,
@@ -201,7 +190,7 @@ function appendPlot(data, title, maxSumEggNum) {
     return +d.weekNum;
   })));
 
-  y.domain([0, maxSumEggNum]);
+  y.domain([0, d3.max(data.map((d) => d.sumEggNum))]);
   y2.domain([0, 100]);
 
   var line = d3.svg.line()
