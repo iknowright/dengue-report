@@ -197,6 +197,9 @@ for week_range_str in update_weeks:
     week_str_list.append(generate_week_str(week_start, 3))
     week_str_list.append(generate_week_str(week_start, 4))
 
+    if week_range_str not in survey_dict.keys():
+        continue
+
     for city in survey_dict[week_range_str].keys():
         for area in survey_dict[week_range_str][city].keys():
             for village in survey_dict[week_range_str][city][area].keys():
