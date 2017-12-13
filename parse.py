@@ -178,7 +178,7 @@ for file_dict in file_list:
                 survey_dict[week_range_str][city][area][village][bucket_id] = {
                     "bucket_id": bucket_id,
                     "survey_date": survey_date.strftime("%Y-%m-%d"),
-                    "egg_num": (egg_num + larvae_num) if isinstance(larvae_num, int) else egg_num,
+                    "egg_num": (egg_num + larvae_num) if isinstance(larvae_num, int) and isinstance(egg_num, int) else egg_num,
                     "egypt_egg_num": egypt_egg_num,
                     "white_egg_num": white_egg_num,
                     "larvae_num": larvae_num,
@@ -209,8 +209,9 @@ for week_range_str in update_weeks:
                     total_egg_num = 0
                     for week_str in week_str_list:
                         try:
+                            tmp_egg_num = survey_dict[week_str][city][area][village][bucket_id]['egg_num']
                             total_egg_num = total_egg_num + \
-                                survey_dict[week_str][city][area][village][bucket_id]['egg_num']
+                                tmp_egg_num if isinstance(tmp_egg_num, int) else 0
                         except:
                             continue
                     survey_dict[week_range_str][city][area][village][bucket_id]['avg_egg_num'] = int(total_egg_num / len(week_str_list))
