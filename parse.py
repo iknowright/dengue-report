@@ -69,6 +69,8 @@ for key in s3.Bucket('dengue-report-source').objects.all():
 bucket_dict = dict()
 survey_dict = dict()
 for file_dict in file_list:
+# Debugging
+# for file_dict in [file_list[0]]:
     # s3_client.download_file(
         # 'dengue-report-source',
         # file_dict['file_key'],
@@ -208,7 +210,7 @@ for week_range_str in update_weeks:
                     for week_str in week_str_list:
                         try:
                             total_egg_num = total_egg_num + \
-                                survey_dict[week_str][city][area][village][bucket_id]
+                                survey_dict[week_str][city][area][village][bucket_id]['egg_num']
                         except:
                             continue
                     survey_dict[week_range_str][city][area][village][bucket_id]['avg_egg_num'] = int(total_egg_num / len(week_str_list))
@@ -220,6 +222,8 @@ s3.Object("dengue-report-dest", "bucket-list.json").put(
 )
 parselogger.info('upload s3 begin')
 for week_range_str in update_weeks:
+    if week_range_str not in survey_dict.keys():
+        continue
     s3.Object("dengue-report-dest", "week/%s.json" % (week_range_str)).put(
         ACL='public-read',
         Body=json.dumps(survey_dict[week_range_str], ensure_ascii=False)
