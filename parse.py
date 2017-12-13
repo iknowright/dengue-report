@@ -178,7 +178,7 @@ for file_dict in file_list:
                 survey_dict[week_range_str][city][area][village][bucket_id] = {
                     "bucket_id": bucket_id,
                     "survey_date": survey_date.strftime("%Y-%m-%d"),
-                    "egg_num": egg_num + int(larvae_num),
+                    "egg_num": (egg_num + int(larvae_num)) if larvae_num.isdigit() else egg_num,
                     "egypt_egg_num": egypt_egg_num,
                     "white_egg_num": white_egg_num,
                     "larvae_num": larvae_num,
