@@ -440,12 +440,12 @@ function clearMap() {
   });
 
   heat = L.heatLayer([], {
-    minOpacity: 0.4,
+    minOpacity: 0,
     radius: 40,
     blur: 20, //越小越精確、越大heat lose 越多
     gradient: {
-      0.4: 'SlateBlue',
-      0.6: 'Gold',
+      0: 'SlateBlue',
+      0.5: 'Gold',
       1: 'red',
     }
   });
@@ -466,7 +466,7 @@ function updateMap(insertBucketJson) {
     var eggNem = insertBucketJson[bucketId].egg_num;
     var village = insertBucketJson[bucketId].village;
     var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
-    heat.addLatLng([lat, lng, avgEggNum]);
+    heat.addLatLng([lat, lng, avgEggNum/80]);
 
     var icon = L.icon({
       iconUrl: getIconStyle(eggNem),
