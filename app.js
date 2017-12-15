@@ -348,7 +348,8 @@ function insertBucketList(week) {
         var bucketResult = allWeekResult[week][country][town][village][bucketId];
         insertBucketJson[bucketId] = {
           egg_num: allWeekResult[week][country][town][village][bucketId].egg_num,
-          avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num
+          avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num,
+          village: village
         };
         insertBucketHtml(bucketAddress, bucketResult);
       })
@@ -374,7 +375,6 @@ function insertBucketList(week) {
     });
     updateMap(insertBucketJson);
   }
-
 }
 
 function insertBucketHtml(bucketAddress, bucketResult) {
