@@ -168,7 +168,7 @@ $("#select-town").change(function() {
   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
   $("#select-village").empty();
   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
-  // $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+  $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
 });
 
@@ -176,7 +176,7 @@ $("#select-village").change(function() {
   var value = $("#weeklyDatePicker").val();
   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
-  // $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+  $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
 });
 
