@@ -76,9 +76,9 @@ function chartFetchWeek(firstDate,lastDate,county,town) {
         console.log(townresult);
       }
       chartUpdateTownForm(townresult, townTaken);
-      updateAnalysisTitle();
       console.log("data length = "+ data.length);
       appendChart('#chart', data, townTaken, townresult);
+      updateAnalysisTitle();
     });
 }
 
@@ -108,7 +108,7 @@ function updateAnalysisTitle() {
   var town = $("#chart-select-town").val();
   var week = $("#chart-weeklyDatePicker").val();
   var analysisTitle;
-
+  console.log(town);
   if (town === '無資料') {
     analysisTitle = '<h3 class="text-center">暫無資料</h3>';
     $('#chart').empty();
