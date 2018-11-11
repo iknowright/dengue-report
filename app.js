@@ -454,8 +454,10 @@ function updateMap(insertBucketJson) {
     {
       console.log("no data: " + bucketId);
     }
+    var lat = bucketJson[bucketId].lat;
+    var lng = bucketJson[bucketId].lng;
     // var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
-    // heat.addLatLng([bucketJson[bucket_id].lat, bucketJson[bucket_id].lng, 0]);
+    heat.addLatLng([lat, lng, 0]);
     var icon = L.icon({
       iconUrl: getIconStyle(eggNem),
       iconSize: [45, 80], // size of the icon
@@ -464,24 +466,24 @@ function updateMap(insertBucketJson) {
       className: getIconCat(eggNem),
     });
   
-    // var marker = L.marker([lat, lng], { icon: icon })
-    //   .bindPopup(
-    //     ('<table>' +
-    //       '<tr>' +
-    //       '<th>id</th>' +
-    //       '<td>{0}</td>' +
-    //       '</tr>' +
-    //       '<tr>' +
-    //       '<th>卵數</th>' +
-    //       '<td>{1}</td>' +
-    //       '</tr>' +
-    //       '<tr>' +
-    //       '<th>里</th>' +
-    //       '<td>{2}</td>' +
-    //       '</tr>' +
-    //       '</table>').format(bucketId, eggNem, village))
-    //   .addTo(map);
-    // markerArray.push(marker);
+    var marker = L.marker([lat, lng], { icon: icon })
+      .bindPopup(
+        ('<table>' +
+          '<tr>' +
+          '<th>id</th>' +
+          '<td>{0}</td>' +
+          '</tr>' +
+          '<tr>' +
+          '<th>卵數</th>' +
+          '<td>{1}</td>' +
+          '</tr>' +
+          '<tr>' +
+          '<th>里</th>' +
+          '<td>{2}</td>' +
+          '</tr>' +
+          '</table>').format(bucketId, eggNem, village))
+      .addTo(map);
+    markerArray.push(marker);
   });
 
   $("#map").show();
