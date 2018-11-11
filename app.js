@@ -32,8 +32,9 @@ $(document).ready(function() {
   });
 
   $.getJSON(
-    "https://s3-ap-northeast-1.amazonaws.com/dengue-report-dest/bucket-list.json",
+    "http://52.23.181.212/api/bucket/",
     function(data) {
+      console.log(data);
       bucketJson = data;
     });
 
@@ -445,14 +446,16 @@ function updateMap(insertBucketJson) {
     return;
   }
   var bucketIds = Object.keys(insertBucketJson);
-  console.log(bucketIds);
+  // console.log(bucketIds);
   bucketIds.forEach(function(bucketId) {
-    var lat = bucketJson[bucketId].bucket_lat;
-    var lng = bucketJson[bucketId].bucket_lng;
     var eggNem = insertBucketJson[bucketId].egg_num;
     var village = insertBucketJson[bucketId].village;
+    if(!bucketJson[bucketId])
+    {
+      console.log("no data: " + bucketId);
+    }
     // var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
-    heat.addLatLng([lat, lng, 0]);
+    // heat.addLatLng([bucketJson[bucket_id].lat, bucketJson[bucket_id].lng, 0]);
     var icon = L.icon({
       iconUrl: getIconStyle(eggNem),
       iconSize: [45, 80], // size of the icon
@@ -461,24 +464,24 @@ function updateMap(insertBucketJson) {
       className: getIconCat(eggNem),
     });
   
-    var marker = L.marker([lat, lng], { icon: icon })
-      .bindPopup(
-        ('<table>' +
-          '<tr>' +
-          '<th>id</th>' +
-          '<td>{0}</td>' +
-          '</tr>' +
-          '<tr>' +
-          '<th>卵數</th>' +
-          '<td>{1}</td>' +
-          '</tr>' +
-          '<tr>' +
-          '<th>里</th>' +
-          '<td>{2}</td>' +
-          '</tr>' +
-          '</table>').format(bucketId, eggNem, village))
-      .addTo(map);
-    markerArray.push(marker);
+    // var marker = L.marker([lat, lng], { icon: icon })
+    //   .bindPopup(
+    //     ('<table>' +
+    //       '<tr>' +
+    //       '<th>id</th>' +
+    //       '<td>{0}</td>' +
+    //       '</tr>' +
+    //       '<tr>' +
+    //       '<th>卵數</th>' +
+    //       '<td>{1}</td>' +
+    //       '</tr>' +
+    //       '<tr>' +
+    //       '<th>里</th>' +
+    //       '<td>{2}</td>' +
+    //       '</tr>' +
+    //       '</table>').format(bucketId, eggNem, village))
+    //   .addTo(map);
+    // markerArray.push(marker);
   });
 
   $("#map").show();
