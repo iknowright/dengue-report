@@ -351,7 +351,8 @@ function insertBucketList(data) {
       village: element.village
     };
     insertBucketHtml(bucketAddress, element);    
-  });      
+  });
+  console.log(insertBucketJson);
   updateMap(insertBucketJson);
 }
 
@@ -444,14 +445,14 @@ function updateMap(insertBucketJson) {
     return;
   }
   var bucketIds = Object.keys(insertBucketJson);
+  console.log(bucketIds);
   bucketIds.forEach(function(bucketId) {
     var lat = bucketJson[bucketId].bucket_lat;
     var lng = bucketJson[bucketId].bucket_lng;
     var eggNem = insertBucketJson[bucketId].egg_num;
     var village = insertBucketJson[bucketId].village;
-    var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
-    heat.addLatLng([lat, lng, avgEggNum/80]);
-
+    // var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
+    heat.addLatLng([lat, lng, 0]);
     var icon = L.icon({
       iconUrl: getIconStyle(eggNem),
       iconSize: [45, 80], // size of the icon
