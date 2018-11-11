@@ -291,8 +291,8 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
       updateTownAndVillageForm(townresult, villageresult, townTaken, villageTaken);
       console.log("data length = "+ data.length);
       insertBucketList(data);
-      // updateMapTitle();
-      // resetLegendCheckbox();
+      updateMapTitle();
+      resetLegendCheckbox();
     });
 }
 
