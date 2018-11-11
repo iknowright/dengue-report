@@ -9,7 +9,7 @@ if (!String.prototype.format) {
 }
 var townresult = [];
 var villageresult = [];
-
+var requestData = {};
 
 var bucketJson = {};
 var countryJson = {};
@@ -144,8 +144,8 @@ $("#weeklyDatePicker").on("dp.change", function() {
   $("#select-village").empty();
   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
   $("#weeklyDatePicker").val(firstDate + "~" + lastDate);
-  // $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-  fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val(),true);
+  $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+  fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
 });
 
 // select event
@@ -157,14 +157,8 @@ $("#select-country").change(function() {
   $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
   $("#select-village").empty();
   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
-  // $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+  $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
-  // fetchWeek($("#weeklyDatePicker").val(), function() {
-  //   updateTownAndVillageForm();
-  //   // insertBucketList($("#weeklyDatePicker").val());
-  //   updateMapTitle();
-  //   resetLegendCheckbox();
-  // });
 });
 
 $("#select-town").change(function() {
@@ -175,12 +169,6 @@ $("#select-town").change(function() {
   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
   // $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
-  // fetchWeek($("#weeklyDatePicker").val(), function() {
-  //   updateVillageForm();
-  //   // insertBucketList($("#weeklyDatePicker").val());
-  //   updateMapTitle();
-  //   resetLegendCheckbox();
-  // });
 });
 
 $("#select-village").change(function() {
@@ -189,11 +177,6 @@ $("#select-village").change(function() {
   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
   // $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
-  // fetchWeek($("#weeklyDatePicker").val(), function() {
-  //   // insertBucketList($("#weeklyDatePicker").val());
-  //   updateMapTitle();
-  //   resetLegendCheckbox();
-  // });
 });
 
 function addDangerMarkers(layer) {
@@ -238,7 +221,7 @@ function removeDangerMarkers(layer) {
 
 
 // fetch '201x/xx/xx ~ 201x/xx/xx.json'
-function fetchWeek(firstDate,lastDate,county,town,village, formreset) {
+function fetchWeek(firstDate,lastDate,county,town,village) {
   console.log(firstDate+lastDate+county+town+village);
   var params;
   var townTaken = false;
@@ -306,6 +289,9 @@ function fetchWeek(firstDate,lastDate,county,town,village, formreset) {
       }
       updateTownAndVillageForm(townresult, villageresult, townTaken, villageTaken);
       console.log("data length = "+ data.length);
+      insertBucketList(data);
+      // updateMapTitle();
+      // resetLegendCheckbox();
     });
 }
 
@@ -351,60 +337,31 @@ function updateTownAndVillageForm(townresult, villageresult, townTaken, villageT
 }
 
 
-// function insertBucketList(week) {
-//   $("#bucket-list").empty();
-//   clearMap();
+function insertBucketList(data) {
+  $("#bucket-list").empty();
+  clearMap();
+  console.log(data);
 
-//   var country = $("#select-country").val();
-//   var town = $("#select-town").val();
-//   var village = $("#select-village").val();
-//   var insertBucketJson = {};
-
-//   if (town !== '無資料' && village !== '無資料') {
-//     var towns = [];
-//     if (village === '全里' && town === '全區') {
-//       towns = getKeys(allWeekResult[week][country]);
-//     } else if (village === '全里') {
-//       towns = [town];
-//     } else {
-//       var bucketIds = getKeys(allWeekResult[week][country][town][village]);
-//       bucketIds.forEach(function(bucketId) {
-//         var bucketAddress = "{0}{1}{2}".format(country, town, village);
-//         var bucketResult = allWeekResult[week][country][town][village][bucketId];
-//         insertBucketJson[bucketId] = {
-//           egg_num: allWeekResult[week][country][town][village][bucketId].egg_num,
-//           avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num,
-//           village: village
-//         };
-//         insertBucketHtml(bucketAddress, bucketResult);
-//       })
-
-      
-//       updateMap(insertBucketJson);
-//       return;
-//     }
-
-//     towns.forEach(function(town) {
-//       var villages = getKeys(allWeekResult[week][country][town]);
-//       villages.forEach(function(village) {
-//         var bucketIds = getKeys(allWeekResult[week][country][town][village]);
-//         bucketIds.forEach(function(bucketId) {
-//           var bucketAddress = "{0}{1}{2}".format(country, town, village);
-//           var bucketResult = allWeekResult[week][country][town][village][bucketId];
-//           insertBucketJson[bucketId] = {
-//             egg_num: allWeekResult[week][country][town][village][bucketId].egg_num,
-//             avg_egg_num: allWeekResult[week][country][town][village][bucketId].avg_egg_num,
-//             village: village
-//           };
-//           insertBucketHtml(bucketAddress, bucketResult);
-//         });
-//       });
-//     });
-//     updateMap(insertBucketJson);
-//   }
-// }
+  var insertBucketJson = {};
+  data.forEach(function(element) {
+    var bucketAddress = "{0}{1}{2}".format(element.county, element.town, element.village);
+    // console.log(bucketAddress); 
+    insertBucketJson[element.bucket_id] = {
+      egg_num: element.egg_count,
+      village: element.village
+    };
+    insertBucketHtml(bucketAddress, element);    
+  });      
+  updateMap(insertBucketJson);
+}
 
 function insertBucketHtml(bucketAddress, bucketResult) {
+  if(bucketResult.egypt_egg_count == -1) {
+    bucketResult.egypt_egg_count = '暫無資料';
+  }
+  if(bucketResult.white_egg_count == -1) {
+    bucketResult.white_egg_count = '暫無資料';
+  }
   var insertHTML =
     ('<div class="col-md-3 col-xs-12">' +
       '<div class="panel panel-default">' +
@@ -420,15 +377,15 @@ function insertBucketHtml(bucketAddress, bucketResult) {
       '<p>埃及幼蟲：{6}</p>' +
       '<p>白線幼蟲：{7}</p>' +
       '<p>備註：{8}</p>' +
-      '<p>過去一個月平均卵數：{9}</p>' +
+      // '<p>過去一個月平均卵數：{9}</p>' +
       '</div>' +
       '</div>' +
       '</div>')
     .format(bucketResult.bucket_id, bucketAddress,
-      bucketResult.egg_num, bucketResult.egypt_egg_num,
-      bucketResult.white_egg_num, bucketResult.larvae_num,
-      bucketResult.egypt_larvae_num, bucketResult.white_larvae_num,
-      bucketResult.survey_note, bucketResult.avg_egg_num);
+      bucketResult.egg_count, bucketResult.egypt_egg_count,
+      bucketResult.white_egg_count, bucketResult.larvae_count,
+      bucketResult.egypt_larvae_count, bucketResult.white_larvae_count,
+    bucketResult.note/* , bucketResult.avg_egg_num */);
   $("#bucket-list").append(insertHTML);
 }
 
