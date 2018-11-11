@@ -34,7 +34,7 @@ $(document).ready(function() {
   $.getJSON(
     "http://52.23.181.212/api/bucket/",
     function(data) {
-      console.log(data);
+      // console.log(data);
       bucketJson = data;
     });
 
@@ -223,7 +223,7 @@ function removeDangerMarkers(layer) {
 
 // fetch '201x/xx/xx ~ 201x/xx/xx.json'
 function fetchWeek(firstDate,lastDate,county,town,village) {
-  console.log(firstDate+lastDate+county+town+village);
+  // console.log(firstDate+lastDate+county+town+village);
   var params;
   var townTaken = false;
   var villageTaken = false;
@@ -255,7 +255,7 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
       };
     }
   }
-  console.log(params);
+  // console.log(params);
   $.getJSON(
     "http://52.23.181.212/api/bucket-record/",
     params,
@@ -289,7 +289,7 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
         }
       }
       updateTownAndVillageForm(townresult, villageresult, townTaken, villageTaken);
-      console.log("data length = "+ data.length);
+      // console.log("data length = "+ data.length);
       insertBucketList(data);
       updateMapTitle();
       resetLegendCheckbox();
@@ -297,8 +297,8 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
 }
 
 function updateTownAndVillageForm(townresult, villageresult, townTaken, villageTaken) {
-  console.log(townresult);
-  console.log(villageresult);
+  // console.log(townresult);
+  // console.log(villageresult);
   var week = $("#weeklyDatePicker").val();
   var county = $("#select-country").val();
   var insertHTML;
@@ -341,7 +341,7 @@ function updateTownAndVillageForm(townresult, villageresult, townTaken, villageT
 function insertBucketList(data) {
   $("#bucket-list").empty();
   clearMap();
-  console.log(data);
+  // console.log(data);
 
   var insertBucketJson = {};
   data.forEach(function(element) {
@@ -353,7 +353,7 @@ function insertBucketList(data) {
     };
     insertBucketHtml(bucketAddress, element);    
   });
-  console.log(insertBucketJson);
+  // console.log(insertBucketJson);
   updateMap(insertBucketJson);
 }
 
