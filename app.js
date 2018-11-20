@@ -7,6 +7,8 @@ if (!String.prototype.format) {
     })
   };
 }
+
+
 var townresult = [];
 var villageresult = [];
 var requestData = {};
@@ -136,11 +138,77 @@ $("#weeklyDatePicker").datetimepicker({
   format: 'YYYY-MM-DD'
 });
 
+// Start And End Date
+$("#weeklyDatePickerStart").datetimepicker({
+  format: 'YYYY-MM-DD'
+});
+
+$("#weeklyDatePickerEnd").datetimepicker({
+  format: 'YYYY-MM-DD'
+});
+
+function compareDate(firstdate, enddate, start, end)
+{
+  if(start.length == 0) {
+    console.log("start date required");
+    return false;
+  } else if(end.length == 0) {
+    console.log("end date required");
+    return false;
+  }
+  if(start.length != 0  && firstdate <= enddate) {
+    var date1 = moment(start, "YYYY-MM-DD");
+    var date2 = moment(end, "YYYY-MM-DD");
+    var dayDiff = date2.diff(date1, 'days');
+    console.log(dayDiff);
+    if(dayDiff > 30 || dayDiff < 7) {
+      console.log("select range not suitable");
+      return false;
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+$("#weeklyDatePickerStart").on("dp.change", function(d) {
+  var start = $("#weeklyDatePickerStart").val();
+  var firstdate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#weeklyDatePickerEnd").val();
+  var enddate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstdate, enddate,start , end)) {
+    $("#select-town").empty();  
+    $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+    $("#select-village").empty();
+    $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+    $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+    fetchWeek(firstdate,enddate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+  }
+});
+$("#weeklyDatePickerEnd").on("dp.change", function(d) {
+  var start = $("#weeklyDatePickerStart").val();
+  var firstdate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#weeklyDatePickerEnd").val();
+  var enddate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstdate, enddate, start, end)) {
+    $("#select-town").empty();  
+    $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+    $("#select-village").empty();
+    $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+    $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+    fetchWeek(firstdate,enddate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+  }
+});
+
+
+
+// Old
 $("#weeklyDatePicker").on("dp.change", function() {
   var value = $("#weeklyDatePicker").val();
   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
-  $("#select-town").empty();
+  console.log(firstDate);
+  console.log(lastDate);
+  $("#select-town").empty();  
   $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
   $("#select-village").empty();
   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
