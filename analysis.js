@@ -2,37 +2,91 @@ $("#chart-weeklyDatePicker").datetimepicker({
   format: 'YYYY-MM-DD'
 });
 
-$("#chart-weeklyDatePicker").on("dp.change", function() {
-  var value = $("#chart-weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
-  $("#chart-select-town").empty();
-  $("#chart-select-town").append("<option value='{0}'>{0}</option>".format('全區'));
-  $("#chart-weeklyDatePicker").val(firstDate + "~" + lastDate);
-  $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
-  chartFetchWeek(firstDate,lastDate,$("#chart-select-country").val(),$("#chart-select-town").val());
+$("#chart-weeklyDatePickerStart").datetimepicker({
+  format: 'YYYY-MM-DD'
 });
 
+$("#chart-weeklyDatePickerEnd").datetimepicker({
+  format: 'YYYY-MM-DD'
+});
+
+function compareDate(firstdate, enddate, start, end)
+{
+  if(start.length == 0) {
+    var aidDate = moment(end, "YYYY-MM-DD").subtract(6, 'days').format("YYYY-MM-DD");
+    $("#chart-weeklyDatePickerStart").val(aidDate);
+    return false;
+  } else if(end.length == 0) {
+    var aidDate = moment(start, "YYYY-MM-DD").add(6, 'days').format("YYYY-MM-DD");
+    $("#chart-weeklyDatePickerEnd").val(aidDate);
+    return false;
+  }
+  if(start.length != 0  && firstdate <= enddate) {
+    var date1 = moment(start, "YYYY-MM-DD");
+    var date2 = moment(end, "YYYY-MM-DD");
+    var dayDiff = date2.diff(date1, 'days');
+    console.log(dayDiff);
+    if(dayDiff > 30 || dayDiff < 7) {
+      console.log("select range not suitable");
+      return false;
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
+$("#chart-weeklyDatePickerStart").on("dp.change", function(d) {
+  var start = $("#chart-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#chart-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstDate,lastDate,start , end)) {
+    $("#select-town").empty();  
+    $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+    $("#select-village").empty();
+    $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+    $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
+    chartFetchWeek(firstDate,lastDate,$("#chart-select-country").val(),$("#chart-select-town").val(),$("#chart-select-village").val());
+  }
+});
+$("#chart-weeklyDatePickerEnd").on("dp.change", function(d) {
+  var start = $("#chart-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#chart-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstDate,lastDate, start, end)) {
+    $("#chart-select-town").empty();  
+    $("#chart-select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+    $("#chart-select-village").empty();
+    $("#chart-select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+    $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
+    chartFetchWeek(firstDate,lastDate,$("#chart-select-country").val(),$("#chart-select-town").val(),$("#chart-select-village").val());
+  }
+});
 $("#chart-select-country").change(function() {
-  $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
-  var value = $("#chart-weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var start = $("#chart-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#chart-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
   $("#chart-select-town").empty();
   $("#chart-select-town").append("<option value='{0}'>{0}</option>".format('全區'));
-  $("#chart-weeklyDatePicker").val(firstDate + "~" + lastDate);
+  $("#chart-select-village").empty();
+  $("#chart-select-village").append("<option value='{0}'>{0}</option>".format('全里'));
   $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
-  chartFetchWeek(firstDate,lastDate,$("#chart-select-country").val(),$("#chart-select-town").val());
+  chartFetchWeek(firstDate,lastDate,$("#chart-select-country").val(),$("#chart-select-town").val(),$("#chart-select-village").val());
 });
 
 $("#chart-select-town").change(function() {
-  var value = $("#chart-weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var start = $("#chart-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#chart-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  $("#chart-select-village").empty();
+  $("#chart-select-village").append("<option value='{0}'>{0}</option>".format('全里'));
   $('#analysis-name').html('<h3 class="text-center">資料載入中...</h3>');
-  chartFetchWeek(firstDate,lastDate,$("#chart-select-country").val(),$("#chart-select-town").val());
+  chartFetchWeek(firstDate,lastDate,$("#chart-select-country").val(),$("#chart-select-town").val(),$("#chart-select-village").val());
 });
-
 
 function chartFetchWeek(firstDate,lastDate,county,town) {
   console.log(firstDate+lastDate+county+town);
@@ -73,7 +127,7 @@ function chartFetchWeek(firstDate,lastDate,county,town) {
             townresult.push(town);
           }
         }
-        console.log(townresult);
+        // console.log(townresult);
       }
       chartUpdateTownForm(townresult, townTaken);
       console.log("data length = "+ data.length);
@@ -84,7 +138,6 @@ function chartFetchWeek(firstDate,lastDate,county,town) {
 
 function chartUpdateTownForm(townresult, townTaken) {
   console.log(townresult);
-  var week = $("#chart-weeklyDatePicker").val();
   var county = $("#chart-select-country").val();
   var insertHTML;
 
@@ -106,7 +159,7 @@ function chartUpdateTownForm(townresult, townTaken) {
 function updateAnalysisTitle() {
   var country = $("#chart-select-country").val();
   var town = $("#chart-select-town").val();
-  var week = $("#chart-weeklyDatePicker").val();
+  var week = $("#chart-weeklyDatePickerStart").val()+"~"+$("#chart-weeklyDatePickerEnd").val();
   var analysisTitle;
   console.log(town);
   if (town === '無資料') {

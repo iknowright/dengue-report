@@ -172,6 +172,7 @@ function compareDate(firstdate, enddate, start, end)
     return false;
   }
 }
+
 $("#weeklyDatePickerStart").on("dp.change", function(d) {
   var start = $("#weeklyDatePickerStart").val();
   var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
