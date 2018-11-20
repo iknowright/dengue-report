@@ -172,56 +172,37 @@ function compareDate(firstdate, enddate, start, end)
 }
 $("#weeklyDatePickerStart").on("dp.change", function(d) {
   var start = $("#weeklyDatePickerStart").val();
-  var firstdate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
   var end = $("#weeklyDatePickerEnd").val();
-  var enddate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
-  if(compareDate(firstdate, enddate,start , end)) {
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstDate,lastDate,start , end)) {
     $("#select-town").empty();  
     $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
     $("#select-village").empty();
     $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
     $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-    fetchWeek(firstdate,enddate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+    fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
   }
 });
 $("#weeklyDatePickerEnd").on("dp.change", function(d) {
   var start = $("#weeklyDatePickerStart").val();
-  var firstdate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
   var end = $("#weeklyDatePickerEnd").val();
-  var enddate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
-  if(compareDate(firstdate, enddate, start, end)) {
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstDate,lastDate, start, end)) {
     $("#select-town").empty();  
     $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
     $("#select-village").empty();
     $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
     $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-    fetchWeek(firstdate,enddate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+    fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
   }
 });
-
-
-
-// Old
-$("#weeklyDatePicker").on("dp.change", function() {
-  var value = $("#weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
-  console.log(firstDate);
-  console.log(lastDate);
-  $("#select-town").empty();  
-  $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
-  $("#select-village").empty();
-  $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
-  $("#weeklyDatePicker").val(firstDate + "~" + lastDate);
-  $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-  fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
-});
-
-// select event
 $("#select-country").change(function() {
-  var value = $("#weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var start = $("#weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
   $("#select-town").empty();
   $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
   $("#select-village").empty();
@@ -231,9 +212,10 @@ $("#select-country").change(function() {
 });
 
 $("#select-town").change(function() {
-  var value = $("#weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var start = $("#weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
   $("#select-village").empty();
   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
@@ -241,12 +223,60 @@ $("#select-town").change(function() {
 });
 
 $("#select-village").change(function() {
-  var value = $("#weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var start = $("#weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
 });
+
+// Old
+// $("#weeklyDatePicker").on("dp.change", function() {
+//   var value = $("#weeklyDatePicker").val();
+//   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
+//   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+//   console.log(firstDate);
+//   console.log(lastDate);
+//   $("#select-town").empty();  
+//   $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+//   $("#select-village").empty();
+//   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+//   $("#weeklyDatePicker").val(firstDate + "~" + lastDate);
+//   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+//   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+// });
+
+// select event
+// $("#select-country").change(function() {
+//   var value = $("#weeklyDatePicker").val();
+//   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
+//   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+//   $("#select-town").empty();
+//   $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+//   $("#select-village").empty();
+//   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+//   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+//   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+// });
+
+// $("#select-town").change(function() {
+//   var value = $("#weeklyDatePicker").val();
+//   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
+//   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+//   $("#select-village").empty();
+//   $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+//   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+//   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+// });
+
+// $("#select-village").change(function() {
+//   var value = $("#weeklyDatePicker").val();
+//   var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
+//   var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+//   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+//   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
+// });
 
 function addDangerMarkers(layer) {
   dangerDots.forEach(function(item, id) {
@@ -472,7 +502,7 @@ function updateMapTitle() {
   var country = $("#select-country").val();
   var town = $("#select-town").val();
   var village = $("#select-village").val();
-  var week = $("#weeklyDatePicker").val();
+  var week = $("#weeklyDatePickerStart").val()+"~"+$("#weeklyDatePickerEnd").val();
   var mapTitle;
 
   if (town === '無資料' || village === '無資料') {
