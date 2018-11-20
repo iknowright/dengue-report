@@ -89,7 +89,7 @@ $("#table-select-town").change(function() {
 });
 
 function tableFetchWeek(firstDate,lastDate,county,town) {
-  console.log(firstDate+lastDate+county+town);
+  // console.log(firstDate+lastDate+county+town);
   var params;
   var townTaken = false;
   if(town == '全區' || town == '無資料') {
@@ -127,10 +127,10 @@ function tableFetchWeek(firstDate,lastDate,county,town) {
             townresult.push(town);
           }
         }
-        console.log(townresult);
+        // console.log(townresult);
       }
       tableUpdateTownForm(townresult, townTaken);
-      console.log("data length = "+ data.length);
+      // console.log("data length = "+ data.length);
       appendTable('#chart', data, townTaken, townresult);
       updateTableTitle();
     });
@@ -182,9 +182,10 @@ function produceTableData(data, townTaken, townresult) {
       var villagelist = data.filter(function(t) {
         return t.village == villageid;
       })
-      // console.log(villagelist);
+      
       
       var bucketNum = villagelist.length;
+      console.log(bucketNum);
       var bucketHasEgg = 0;
       var eggSum = 0;
       villagelist.forEach(function(element){   
@@ -227,6 +228,7 @@ function produceTableData(data, townTaken, townresult) {
         })
         // console.log(villagelist);
         var bucketNum = villagelist.length;
+        console.log(bucketNum);
         var bucketHasEgg = 0;
         var eggSum = 0;
         villagelist.forEach(function(element){   
@@ -246,7 +248,7 @@ function produceTableData(data, townTaken, townresult) {
       });
     });
   }
-  console.log(returnData);
+  // console.log(returnData);
   return returnData;
 }
 
