@@ -131,7 +131,7 @@ function tableFetchWeek(firstDate,lastDate,county,town) {
       }
       tableUpdateTownForm(townresult, townTaken);
       console.log("data length = "+ data.length);
-      appendTable('#table', data, townTaken, townresult);
+      appendTable('#chart', data, townTaken, townresult);
       updateTableTitle();
     });
 }
