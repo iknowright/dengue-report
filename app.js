@@ -150,10 +150,12 @@ $("#weeklyDatePickerEnd").datetimepicker({
 function compareDate(firstdate, enddate, start, end)
 {
   if(start.length == 0) {
-    console.log("start date required");
+    var aidDate = moment(end, "YYYY-MM-DD").subtract(6, 'days').format("YYYY-MM-DD");
+    $("#weeklyDatePickerStart").val(aidDate);
     return false;
   } else if(end.length == 0) {
-    console.log("end date required");
+    var aidDate = moment(start, "YYYY-MM-DD").add(6, 'days').format("YYYY-MM-DD");
+    $("#weeklyDatePickerEnd").val(aidDate);
     return false;
   }
   if(start.length != 0  && firstdate <= enddate) {
