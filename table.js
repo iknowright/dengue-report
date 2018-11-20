@@ -2,35 +2,90 @@ $("#table-weeklyDatePicker").datetimepicker({
   format: 'YYYY-MM-DD'
 });
 
-$("#table-weeklyDatePicker").on("dp.change", function() {
-  var value = $("#table-weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
-  $("#table-select-town").empty();
-  $("#table-select-town").append("<option value='{0}'>{0}</option>".format('全區'));
-  $("#table-weeklyDatePicker").val(firstDate + "~" + lastDate);
-  $('#table-name').html('<h3 class="text-center">資料載入中...</h3>');
-  tableFetchWeek(firstDate,lastDate,$("#table-select-country").val(),$("#table-select-town").val());
+$("#table-weeklyDatePickerStart").datetimepicker({
+  format: 'YYYY-MM-DD'
 });
 
+$("#table-weeklyDatePickerEnd").datetimepicker({
+  format: 'YYYY-MM-DD'
+});
+
+function compareDate(firstdate, enddate, start, end)
+{
+  if(start.length == 0) {
+    var aidDate = moment(end, "YYYY-MM-DD").subtract(6, 'days').format("YYYY-MM-DD");
+    $("#table-weeklyDatePickerStart").val(aidDate);
+    return false;
+  } else if(end.length == 0) {
+    var aidDate = moment(start, "YYYY-MM-DD").add(6, 'days').format("YYYY-MM-DD");
+    $("#table-weeklyDatePickerEnd").val(aidDate);
+    return false;
+  }
+  if(start.length != 0  && firstdate <= enddate) {
+    var date1 = moment(start, "YYYY-MM-DD");
+    var date2 = moment(end, "YYYY-MM-DD");
+    var dayDiff = date2.diff(date1, 'days');
+    console.log(dayDiff);
+    if(dayDiff > 30 || dayDiff < 7) {
+      console.log("select range not suitable");
+      return false;
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
+$("#table-weeklyDatePickerStart").on("dp.change", function(d) {
+  var start = $("#table-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#table-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstDate,lastDate,start , end)) {
+    $("#select-town").empty();  
+    $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+    $("#select-village").empty();
+    $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+    $('#table-name').html('<h3 class="text-center">資料載入中...</h3>');
+    tableFetchWeek(firstDate,lastDate,$("#table-select-country").val(),$("#table-select-town").val(),$("#table-select-village").val());
+  }
+});
+$("#table-weeklyDatePickerEnd").on("dp.change", function(d) {
+  var start = $("#table-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#table-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  if(compareDate(firstDate,lastDate, start, end)) {
+    $("#table-select-town").empty();  
+    $("#table-select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+    $("#table-select-village").empty();
+    $("#table-select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+    $('#table-name').html('<h3 class="text-center">資料載入中...</h3>');
+    tableFetchWeek(firstDate,lastDate,$("#table-select-country").val(),$("#table-select-town").val(),$("#table-select-village").val());
+  }
+});
 $("#table-select-country").change(function() {
-  $('#table-name').html('<h3 class="text-center">資料載入中...</h3>');
-  var value = $("#table-weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var start = $("#table-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#table-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
   $("#table-select-town").empty();
   $("#table-select-town").append("<option value='{0}'>{0}</option>".format('全區'));
-  $("#table-weeklyDatePicker").val(firstDate + "~" + lastDate);
+  $("#table-select-village").empty();
+  $("#table-select-village").append("<option value='{0}'>{0}</option>".format('全里'));
   $('#table-name').html('<h3 class="text-center">資料載入中...</h3>');
-  tableFetchWeek(firstDate,lastDate,$("#table-select-country").val(),$("#table-select-town").val());
+  tableFetchWeek(firstDate,lastDate,$("#table-select-country").val(),$("#table-select-town").val(),$("#table-select-village").val());
 });
 
 $("#table-select-town").change(function() {
-  var value = $("#table-weeklyDatePicker").val();
-  var firstDate = moment(value, "YYYY-MM-DD").day(0).format("YYYY-MM-DD");
-  var lastDate = moment(value, "YYYY-MM-DD").day(6).format("YYYY-MM-DD");
+  var start = $("#table-weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var end = $("#table-weeklyDatePickerEnd").val();
+  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
+  $("#table-select-village").empty();
+  $("#table-select-village").append("<option value='{0}'>{0}</option>".format('全里'));
   $('#table-name').html('<h3 class="text-center">資料載入中...</h3>');
-  tableFetchWeek(firstDate,lastDate,$("#table-select-country").val(),$("#table-select-town").val());
+  tableFetchWeek(firstDate,lastDate,$("#table-select-country").val(),$("#table-select-town").val(),$("#table-select-village").val());
 });
 
 function tableFetchWeek(firstDate,lastDate,county,town) {
@@ -76,7 +131,7 @@ function tableFetchWeek(firstDate,lastDate,county,town) {
       }
       tableUpdateTownForm(townresult, townTaken);
       console.log("data length = "+ data.length);
-      appendTable('#chart', data, townTaken, townresult);
+      appendTable('#table', data, townTaken, townresult);
       updateTableTitle();
     });
 }
@@ -198,7 +253,7 @@ function produceTableData(data, townTaken, townresult) {
 function updateTableTitle() {
   var country = $("#table-select-country").val();
   var town = $("#table-select-town").val();
-  var week = $("#table-weeklyDatePicker").val();
+  var week = $("#table-weeklyDatePickerStart").val()+"~"+$("#table-weeklyDatePickerEnd").val();
   var tableTitle;
 
   if (town === '無資料') {
