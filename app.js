@@ -134,9 +134,9 @@ $(document).ready(function() {
 
 // date
 
-$("#weeklyDatePicker").datetimepicker({
-  format: 'YYYY-MM-DD'
-});
+// $("#weeklyDatePicker").datetimepicker({
+//   format: 'YYYY-MM-DD'
+// });
 
 // Start And End Date
 $("#weeklyDatePickerStart").datetimepicker({
@@ -350,8 +350,6 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
 }
 
 function updateTownAndVillageForm(townresult, villageresult, townTaken, villageTaken) {
-  // console.log(townresult);
-  // console.log(villageresult);
   var week = $("#weeklyDatePicker").val();
   var county = $("#select-country").val();
   var insertHTML;
@@ -460,20 +458,6 @@ function insertBucketList(data) {
     };
     insertBucketHtml(bucketAddress, lookup[id]);   
   });
-  updateMap(insertBucketJson);
-  // console.log(lookup);
-
-
-  // -------------------------------
-  // var insertBucketJson = {};
-  // data.forEach(function(element) {
-  //   var bucketAddress = "{0}{1}{2}".format(element.county, element.town, element.village);
-  //   insertBucketJson[element.bucket_id] = {
-  //     egg_num: element.egg_count,
-  //     village: element.village
-  //   };
-  //   insertBucketHtml(bucketAddress, element);    
-  // });
   // updateMap(insertBucketJson);
 }
 
