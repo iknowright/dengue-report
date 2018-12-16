@@ -134,10 +134,6 @@ $(document).ready(function() {
 
 // date
 
-// $("#weeklyDatePicker").datetimepicker({
-//   format: 'YYYY-MM-DD'
-// });
-
 // Start And End Date
 $("#weeklyDatePickerStart").datetimepicker({
   format: 'YYYY-MM-DD'
@@ -459,7 +455,7 @@ function insertBucketList(data) {
     };
     insertBucketHtml(bucketAddress, lookup[id]);   
   });
-  // updateMap(insertBucketJson);
+  updateMap(insertBucketJson);
 }
 
 function insertBucketHtml(bucketAddress, bucketResult) {
