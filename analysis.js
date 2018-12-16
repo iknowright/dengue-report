@@ -110,7 +110,7 @@ function chartFetchWeek(firstDate,lastDate,county,town) {
   }
   // console.log(params);
   $.getJSON(
-    "http://52.23.181.212/api/bucket-record/",
+    "http://54.91.186.134/api/bucket-record/",
     params,
     function(data) {
       // console.log(town);

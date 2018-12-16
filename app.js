@@ -34,7 +34,7 @@ $(document).ready(function() {
   });
 
   $.getJSON(
-    "http://52.23.181.212/api/bucket/",
+    "http://54.91.186.134/api/bucket/",
     function(data) {
       // console.log(data);
       bucketJson = data;
@@ -311,7 +311,7 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
   }
   // console.log(params);
   $.getJSON(
-    "http://52.23.181.212/api/bucket-record/",
+    "http://54.91.186.134/api/bucket-record/",
     params,
     function(data) {
       // console.log(town);
