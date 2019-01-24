@@ -1,7 +1,3 @@
-$("#chart-weeklyDatePicker").datetimepicker({
-  format: 'YYYY-MM-DD'
-});
-
 $("#chart-weeklyDatePickerStart").datetimepicker({
   format: 'YYYY-MM-DD'
 });

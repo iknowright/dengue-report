@@ -7,8 +7,6 @@ if (!String.prototype.format) {
     })
   };
 }
-
-
 var townresult = [];
 var villageresult = [];
 var requestData = {};
@@ -143,31 +141,6 @@ $("#weeklyDatePickerEnd").datetimepicker({
   format: 'YYYY-MM-DD'
 });
 
-function compareDate(firstdate, enddate, start, end)
-{
-  if(start.length == 0) {
-    var aidDate = moment(end, "YYYY-MM-DD").subtract(6, 'days').format("YYYY-MM-DD");
-    $("#weeklyDatePickerStart").val(aidDate);
-    return false;
-  } else if(end.length == 0) {
-    var aidDate = moment(start, "YYYY-MM-DD").add(6, 'days').format("YYYY-MM-DD");
-    $("#weeklyDatePickerEnd").val(aidDate);
-    return false;
-  }
-  if(start.length != 0  && firstdate <= enddate) {
-    var date1 = moment(start, "YYYY-MM-DD");
-    var date2 = moment(end, "YYYY-MM-DD");
-    var dayDiff = date2.diff(date1, 'days');
-    console.log(dayDiff);
-    if(dayDiff > 30 || dayDiff < 7) {
-      console.log("select range not suitable");
-      return false;
-    }
-    return true;
-  } else {
-    return false;
-  }
-}
 
 $("#weeklyDatePickerStart").on("dp.change", function(d) {
   var start = $("#weeklyDatePickerStart").val();
