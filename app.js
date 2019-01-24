@@ -10,8 +10,6 @@ if (!String.prototype.format) {
 var townresult = [];
 var villageresult = [];
 var requestData = {};
-var startDate = "";
-var endDate = "";
 
 var bucketJson = {};
 var countryJson = {};
@@ -132,6 +130,9 @@ $(document).ready(function() {
 });
 
 // Start And End Date
+var startDate = "";
+var endDate = "";
+
 $("#weeklyDatePickerStart").datetimepicker({
   minDate: "2017/1/1",
   maxDate: "2018/4/22",
@@ -178,6 +179,7 @@ $("#weeklyDatePickerEnd").on("dp.hide", function(d) {
   $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
   fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
 });
+
 $("#select-country").change(function() {
   var start = $("#weeklyDatePickerStart").val();
   var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
