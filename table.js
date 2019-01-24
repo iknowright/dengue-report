@@ -1,5 +1,5 @@
-startDate = "";
-endDate = "";
+var tableStartDate = "";
+var tableEndDate = "";
 
 $("#table-weeklyDatePickerStart").datetimepicker({
   minDate: "2017/1/1",
@@ -9,9 +9,9 @@ $("#table-weeklyDatePickerStart").datetimepicker({
 $("#table-weeklyDatePickerStart").val(null);
 
 $("#table-weeklyDatePickerStart").on("dp.hide", function(d) {
-  if(startDate == "") {
-    startDate = $("#table-weeklyDatePickerStart").val();
-  } else if($("#table-weeklyDatePickerStart").val() == startDate) {
+  if(tableStartDate == "") {
+    tableStartDate = $("#table-weeklyDatePickerStart").val();
+  } else if($("#table-weeklyDatePickerStart").val() == tableStartDate) {
     return;
   }
   $('#table-content').empty();
@@ -29,11 +29,13 @@ $("#table-weeklyDatePickerStart").on("dp.hide", function(d) {
 });
 
 $("#table-weeklyDatePickerEnd").on("dp.hide", function(d) {
-  if(endDate == "") {
-    endDate = $("#table-weeklyDatePickerEnd").val();
-  } else if($("#table-weeklyDatePickerEnd").val() == endDate) {
+  if(tableEndDate == "") {
+    tableEndDate = $("#table-weeklyDatePickerEnd").val();
+  } else if($("#table-weeklyDatePickerEnd").val() == tableEndDate) {
     return;
   }
+  tableStartDate = "";
+  tableEndDate = "";
   var start = $("#table-weeklyDatePickerStart").val();
   var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
   var end = $("#table-weeklyDatePickerEnd").val();
@@ -95,16 +97,11 @@ function tableFetchWeek(firstDate,lastDate,county,town) {
     params,
     function(data) {
       var lookup = {};
-      var items = data;
+      var towns;
       if(!townTaken) {
         townresult.length = 0;
-        for (var item, i = 0; item = items[i++];) {
-          var town = item.town;
-          if (!(town in lookup)) {
-            lookup[town] = 1;
-            townresult.push(town);
-          }
-        }
+        towns = data.map(function(d){ return d.town});
+        townresult = $.unique(towns);
       }
       tableUpdateTownForm(townresult, townTaken);
       appendTable('#chart', data, townTaken, townresult);
@@ -142,15 +139,10 @@ function produceTableData(data, townTaken, townresult) {
   
   if(townTaken){
     var lookup = {};
-    var items = data;
+    var villages;
     var villageresult = [];
-    for (var item, i = 0; item = items[i++];) {
-      var village = item.village;
-      if (!(village in lookup)) {
-        lookup[village] = 1;
-        villageresult.push(village);
-      }
-    }
+    villages = data.map(function(d){ return d.village});
+    villageresult = $.unique(villages);
     villageresult.forEach(function(villageid) {
       var villagelist = data.filter(function(t) {
         return t.village == villageid;
@@ -184,14 +176,9 @@ function produceTableData(data, townTaken, townresult) {
       var lookup = {};
       var items = townlist;
       var villageresult = [];
-      // var result = [];
-      for (var item, i = 0; item = items[i++];) {
-        var village = item.village;
-        if (!(village in lookup)) {
-          lookup[village] = 1;
-          villageresult.push(village);
-        }
-      }
+      var villages;
+      villages = items.map(function(d){ return d.village});
+      villageresult = $.unique(villages);
       villageresult.forEach(function(villageid) {
         var villagelist = data.filter(function(t) {
           return t.village == villageid;

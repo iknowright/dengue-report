@@ -167,6 +167,8 @@ $("#weeklyDatePickerEnd").on("dp.hide", function(d) {
   } else if($("#weeklyDatePickerEnd").val() == endDate) {
     return;
   }
+  startDate = "";
+  endDate = "";
   var start = $("#weeklyDatePickerStart").val();
   var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
   var end = $("#weeklyDatePickerEnd").val();
@@ -290,28 +292,18 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
     params,
     function(data) {
       var lookup = {};
-      var items = data;
-
+      var towns;
+      var villages
       // var result = [];
       if(!townTaken) {
         townresult.length = 0;
-        for (var item, i = 0; item = items[i++];) {
-          var town = item.town;
-          if (!(town in lookup)) {
-            lookup[town] = 1;
-            townresult.push(town);
-          }
-        }
+        towns = data.map(function(d){ return d.town});
+        townresult = $.unique(towns);
       } else {
         if(villageTaken == false){
           villageresult.length = 0;
-          for (var item, i = 0; item = items[i++];) {
-            var village = item.village;
-            if (!(village in lookup)) {
-              lookup[village] = 1;
-              villageresult.push(village);
-            }
-          }
+          villages = data.map(function(d){ return d.village});
+          villageresult = $.unique(villages);
         }
       }
       updateTownAndVillageForm(townresult, villageresult, townTaken, villageTaken);

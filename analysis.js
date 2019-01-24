@@ -1,5 +1,5 @@
-startDate = "";
-endDate = "";
+var chartStartDate = "";
+var chartEndDate = "";
 
 $("#chart-weeklyDatePickerStart").datetimepicker({
   minDate: "2017/1/1",
@@ -9,9 +9,9 @@ $("#chart-weeklyDatePickerStart").datetimepicker({
 $("#chart-weeklyDatePickerStart").val(null);
 
 $("#chart-weeklyDatePickerStart").on("dp.hide", function(d) {
-  if(startDate == "") {
-    startDate = $("#chart-weeklyDatePickerStart").val();
-  } else if($("#chart-weeklyDatePickerStart").val() == startDate) {
+  if(chartStartDate == "") {
+    chartStartDate = $("#chart-weeklyDatePickerStart").val();
+  } else if($("#chart-weeklyDatePickerStart").val() == chartStartDate) {
     return;
   }
   $("#chart").empty();
@@ -29,11 +29,13 @@ $("#chart-weeklyDatePickerStart").on("dp.hide", function(d) {
 });
 
 $("#chart-weeklyDatePickerEnd").on("dp.hide", function(d) {
-  if(endDate == "") {
-    endDate = $("#chart-weeklyDatePickerEnd").val();
-  } else if($("#chart-weeklyDatePickerEnd").val() == endDate) {
+  if(chartEndDate == "") {
+    chartEndDate = $("#chart-weeklyDatePickerEnd").val();
+  } else if($("#chart-weeklyDatePickerEnd").val() == chartEndDate) {
     return;
   }
+  chartStartDate = "";
+  chartEndDate = "";
   var start = $("#chart-weeklyDatePickerStart").val();
   var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
   var end = $("#chart-weeklyDatePickerEnd").val();
@@ -95,18 +97,11 @@ function chartFetchWeek(firstDate,lastDate,county,town) {
     params,
     function(data) {
       var lookup = {};
-      var items = data;
-
-      // var result = [];
+      var towns;
       if(!townTaken) {
         townresult.length = 0;
-        for (var item, i = 0; item = items[i++];) {
-          var town = item.town;
-          if (!(town in lookup)) {
-            lookup[town] = 1;
-            townresult.push(town);
-          }
-        }
+        towns = data.map(function(d){ return d.town});
+        townresult = $.unique(towns);
       }
       chartUpdateTownForm(townresult, townTaken);
       appendChart('#chart', data, townTaken, townresult);
