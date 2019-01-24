@@ -6,32 +6,6 @@ $("#chart-weeklyDatePickerEnd").datetimepicker({
   format: 'YYYY-MM-DD'
 });
 
-function compareDate(firstdate, enddate, start, end)
-{
-  if(start.length == 0) {
-    var aidDate = moment(end, "YYYY-MM-DD").subtract(6, 'days').format("YYYY-MM-DD");
-    $("#chart-weeklyDatePickerStart").val(aidDate);
-    return false;
-  } else if(end.length == 0) {
-    var aidDate = moment(start, "YYYY-MM-DD").add(6, 'days').format("YYYY-MM-DD");
-    $("#chart-weeklyDatePickerEnd").val(aidDate);
-    return false;
-  }
-  if(start.length != 0  && firstdate <= enddate) {
-    var date1 = moment(start, "YYYY-MM-DD");
-    var date2 = moment(end, "YYYY-MM-DD");
-    var dayDiff = date2.diff(date1, 'days');
-    console.log(dayDiff);
-    if(dayDiff > 30 || dayDiff < 7) {
-      console.log("select range not suitable");
-      return false;
-    }
-    return true;
-  } else {
-    return false;
-  }
-}
-
 $("#chart-weeklyDatePickerStart").on("dp.change", function(d) {
   var start = $("#chart-weeklyDatePickerStart").val();
   var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
@@ -85,7 +59,6 @@ $("#chart-select-town").change(function() {
 });
 
 function chartFetchWeek(firstDate,lastDate,county,town) {
-  console.log(firstDate+lastDate+county+town);
   var params;
   var townTaken = false;
   if(town == '全區' || town == '無資料') {
@@ -104,12 +77,10 @@ function chartFetchWeek(firstDate,lastDate,county,town) {
       town : town
     };
   }
-  // console.log(params);
   $.getJSON(
     "http://54.91.186.134/api/bucket-record/",
     params,
     function(data) {
-      // console.log(town);
       var lookup = {};
       var items = data;
 
@@ -123,17 +94,14 @@ function chartFetchWeek(firstDate,lastDate,county,town) {
             townresult.push(town);
           }
         }
-        // console.log(townresult);
       }
       chartUpdateTownForm(townresult, townTaken);
-      console.log("data length = "+ data.length);
       appendChart('#chart', data, townTaken, townresult);
       updateAnalysisTitle();
     });
 }
 
 function chartUpdateTownForm(townresult, townTaken) {
-  console.log(townresult);
   var county = $("#chart-select-country").val();
   var insertHTML;
 
@@ -157,7 +125,6 @@ function updateAnalysisTitle() {
   var town = $("#chart-select-town").val();
   var week = $("#chart-weeklyDatePickerStart").val()+"~"+$("#chart-weeklyDatePickerEnd").val();
   var analysisTitle;
-  console.log(town);
   if (town === '無資料') {
     analysisTitle = '<h3 class="text-center">暫無資料</h3>';
     $('#chart').empty();
@@ -190,12 +157,10 @@ function produceChartData(data, townTaken, townresult) {
         villageresult.push(village);
       }
     }
-    // console.log(villageresult);
     villageresult.forEach(function(villageid) {
       var villagelist = data.filter(function(t) {
         return t.village == villageid;
       })
-      // console.log(villagelist);
       
       var bucketNum = villagelist.length;
       var bucketHasEgg = 0;
@@ -216,7 +181,6 @@ function produceChartData(data, townTaken, townresult) {
       }
     });
   } else {
-    // console.log(townresult);
     townresult.forEach(function(townid) {
       var townlist = data.filter(function(t) {
         return t.town == townid;
@@ -233,12 +197,10 @@ function produceChartData(data, townTaken, townresult) {
           villageresult.push(village);
         }
       }
-      // console.log(villageresult);
       villageresult.forEach(function(villageid) {
         var villagelist = data.filter(function(t) {
           return t.village == villageid;
         })
-        // console.log(villagelist);
         var bucketNum = villagelist.length;
         var bucketHasEgg = 0;
         var eggSum = 0;
@@ -259,9 +221,6 @@ function produceChartData(data, townTaken, townresult) {
       });
     });
   }
-  
-  
-  console.log(returnData);
   
   return returnData;
 }

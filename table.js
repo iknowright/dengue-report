@@ -63,7 +63,6 @@ $("#table-select-town").change(function() {
 });
 
 function tableFetchWeek(firstDate,lastDate,county,town) {
-  // console.log(firstDate+lastDate+county+town);
   var params;
   var townTaken = false;
   if(town == '全區' || town == '無資料') {
@@ -82,16 +81,12 @@ function tableFetchWeek(firstDate,lastDate,county,town) {
       town : town
     };
   }
-  // console.log(params);
   $.getJSON(
     "http://54.91.186.134/api/bucket-record/",
     params,
     function(data) {
-      // console.log(town);
       var lookup = {};
       var items = data;
-
-      // var result = [];
       if(!townTaken) {
         townresult.length = 0;
         for (var item, i = 0; item = items[i++];) {
@@ -101,17 +96,14 @@ function tableFetchWeek(firstDate,lastDate,county,town) {
             townresult.push(town);
           }
         }
-        // console.log(townresult);
       }
       tableUpdateTownForm(townresult, townTaken);
-      // console.log("data length = "+ data.length);
       appendTable('#chart', data, townTaken, townresult);
       updateTableTitle();
     });
 }
 
 function tableUpdateTownForm(townresult, townTaken) {
-  console.log(townresult);
   var week = $("#table-weeklyDatePicker").val();
   var county = $("#table-select-country").val();
   var insertHTML;
@@ -143,7 +135,6 @@ function produceTableData(data, townTaken, townresult) {
     var lookup = {};
     var items = data;
     var villageresult = [];
-    // var result = [];
     for (var item, i = 0; item = items[i++];) {
       var village = item.village;
       if (!(village in lookup)) {
@@ -151,7 +142,6 @@ function produceTableData(data, townTaken, townresult) {
         villageresult.push(village);
       }
     }
-    // console.log(villageresult);
     villageresult.forEach(function(villageid) {
       var villagelist = data.filter(function(t) {
         return t.village == villageid;
@@ -159,7 +149,6 @@ function produceTableData(data, townTaken, townresult) {
       
       
       var bucketNum = villagelist.length;
-      console.log(bucketNum);
       var bucketHasEgg = 0;
       var eggSum = 0;
       villagelist.forEach(function(element){   
@@ -178,7 +167,6 @@ function produceTableData(data, townTaken, townresult) {
       }
     });
   } else {
-    // console.log(townresult);
     townresult.forEach(function(townid) {
       var townlist = data.filter(function(t) {
         return t.town == townid;
@@ -195,14 +183,11 @@ function produceTableData(data, townTaken, townresult) {
           villageresult.push(village);
         }
       }
-      // console.log(villageresult);
       villageresult.forEach(function(villageid) {
         var villagelist = data.filter(function(t) {
           return t.village == villageid;
         })
-        // console.log(villagelist);
         var bucketNum = villagelist.length;
-        console.log(bucketNum);
         var bucketHasEgg = 0;
         var eggSum = 0;
         villagelist.forEach(function(element){   
@@ -222,7 +207,6 @@ function produceTableData(data, townTaken, townresult) {
       });
     });
   }
-  // console.log(returnData);
   return returnData;
 }
 

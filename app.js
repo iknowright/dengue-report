@@ -10,6 +10,8 @@ if (!String.prototype.format) {
 var townresult = [];
 var villageresult = [];
 var requestData = {};
+var startDate = "";
+var endDate = "";
 
 var bucketJson = {};
 var countryJson = {};
@@ -34,7 +36,6 @@ $(document).ready(function() {
   $.getJSON(
     "http://54.91.186.134/api/bucket/",
     function(data) {
-      // console.log(data);
       bucketJson = data;
     });
 
@@ -130,45 +131,52 @@ $(document).ready(function() {
   });
 });
 
-// date
-
 // Start And End Date
 $("#weeklyDatePickerStart").datetimepicker({
-  format: 'YYYY-MM-DD'
+  minDate: "2017/1/1",
+  maxDate: "2018/4/22",
+  format: 'YYYY-MM-DD',
+});
+$("#weeklyDatePickerStart").val(null);
+
+$("#weeklyDatePickerStart").on("dp.hide", function(d) {
+  if(startDate == "") {
+    startDate = $("#weeklyDatePickerStart").val();
+  } else if($("#weeklyDatePickerStart").val() == startDate) {
+    return;
+  }
+  $("#bucket-list").empty();
+  $('#map-name').empty();
+  clearMap();
+  var start = $("#weeklyDatePickerStart").val();
+  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
+  var aidDateMin = moment(start, "YYYY-MM-DD").add(7, 'days').format("YYYY-MM-DD");
+  var aidDateMax = moment(start, "YYYY-MM-DD").add(30, 'days').format("YYYY-MM-DD");
+  $("#weeklyDatePickerEnd").datetimepicker({
+    minDate: aidDateMin,
+    maxDate: aidDateMax,
+    format: 'YYYY-MM-DD',
+  });
+  $("#weeklyDatePickerEnd").data("DateTimePicker").clear();
 });
 
-$("#weeklyDatePickerEnd").datetimepicker({
-  format: 'YYYY-MM-DD'
-});
-
-
-$("#weeklyDatePickerStart").on("dp.change", function(d) {
+$("#weeklyDatePickerEnd").on("dp.hide", function(d) {
+  if(endDate == "") {
+    endDate = $("#weeklyDatePickerEnd").val();
+  } else if($("#weeklyDatePickerEnd").val() == endDate) {
+    return;
+  }
   var start = $("#weeklyDatePickerStart").val();
   var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
   var end = $("#weeklyDatePickerEnd").val();
+  console.log(end);
   var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
-  if(compareDate(firstDate,lastDate,start , end)) {
-    $("#select-town").empty();  
-    $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
-    $("#select-village").empty();
-    $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
-    $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-    fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
-  }
-});
-$("#weeklyDatePickerEnd").on("dp.change", function(d) {
-  var start = $("#weeklyDatePickerStart").val();
-  var firstDate = moment(start, "YYYY-MM-DD").format("YYYY-MM-DD");
-  var end = $("#weeklyDatePickerEnd").val();
-  var lastDate = moment(end, "YYYY-MM-DD").format("YYYY-MM-DD");
-  if(compareDate(firstDate,lastDate, start, end)) {
-    $("#select-town").empty();  
-    $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
-    $("#select-village").empty();
-    $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
-    $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
-    fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
-  }
+  $("#select-town").empty();
+  $("#select-town").append("<option value='{0}'>{0}</option>".format('全區'));
+  $("#select-village").empty();
+  $("#select-village").append("<option value='{0}'>{0}</option>".format('全里'));
+  $('#map-name').html('<h3 class="text-center">資料載入中...</h3>');
+  fetchWeek(firstDate,lastDate,$("#select-country").val(),$("#select-town").val(),$("#select-village").val());
 });
 $("#select-country").change(function() {
   var start = $("#weeklyDatePickerStart").val();
@@ -243,10 +251,7 @@ function removeDangerMarkers(layer) {
   });
 }
 
-
-// fetch '201x/xx/xx ~ 201x/xx/xx.json'
 function fetchWeek(firstDate,lastDate,county,town,village) {
-  // console.log(firstDate+lastDate+county+town+village);
   var params;
   var townTaken = false;
   var villageTaken = false;
@@ -278,12 +283,10 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
       };
     }
   }
-  // console.log(params);
   $.getJSON(
     "http://54.91.186.134/api/bucket-record/",
     params,
     function(data) {
-      // console.log(town);
       var lookup = {};
       var items = data;
 
@@ -297,7 +300,6 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
             townresult.push(town);
           }
         }
-        // console.log(townresult);
       } else {
         if(villageTaken == false){
           villageresult.length = 0;
@@ -308,11 +310,9 @@ function fetchWeek(firstDate,lastDate,county,town,village) {
               villageresult.push(village);
             }
           }
-          // console.log(villageresult);
         }
       }
       updateTownAndVillageForm(townresult, villageresult, townTaken, villageTaken);
-      // console.log("data length = "+ data.length);
       insertBucketList(data);
       updateMapTitle();
       resetLegendCheckbox();
@@ -362,10 +362,8 @@ function updateTownAndVillageForm(townresult, villageresult, townTaken, villageT
 function insertBucketList(data) {
   $("#bucket-list").empty();
   clearMap();
-  // console.log(data);
 
   // -------------------------------
-  // var distinctBucket
   var distinctBucket = [];
   var lookup = {};
 
@@ -481,7 +479,7 @@ function updateMapTitle() {
   var week = $("#weeklyDatePickerStart").val()+"~"+$("#weeklyDatePickerEnd").val();
   var mapTitle;
 
-  if (town === '無資料' || village === '無資料') {
+  if (town === '無資料') {
     mapTitle = '<h3 class="text-center">暫無資料</h3>';
   } else {
     mapTitle = '<h3 class="text-center">' + week + ' / ' + country + ' / ' + town + ' / ' + village + '</h3>';
@@ -520,14 +518,9 @@ function updateMap(insertBucketJson) {
     return;
   }
   var bucketIds = Object.keys(insertBucketJson);
-  // console.log(bucketIds);
   bucketIds.forEach(function(bucketId) {
     var eggNem = insertBucketJson[bucketId].egg_num;
     var village = insertBucketJson[bucketId].village;
-    if(!bucketJson[bucketId])
-    {
-      console.log("no data: " + bucketId);
-    }
     var lat = bucketJson[bucketId].lat;
     var lng = bucketJson[bucketId].lng;
     // var avgEggNum = insertBucketJson[bucketId].avg_egg_num;
